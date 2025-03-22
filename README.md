@@ -8,6 +8,8 @@ Aaron Aaron Jubil
 The Documentator:
 Jack Marken
 
-The Nothing:
+Gracious Programmer #2:
 Philipus Sanjaya
 
+Gracious Programmer #1
+Jordan Armstrong

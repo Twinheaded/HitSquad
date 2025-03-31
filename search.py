@@ -2,10 +2,13 @@ import sys
 import re
 from collections import deque
 
-from utils import *
+from src.utils import *
 
 from abstract_classes import *
 from search_algorithms import *
+
+
+
 
 def get_data(filename):
     wrong_format_error = "\nInput file is not written in the correct format.\n"

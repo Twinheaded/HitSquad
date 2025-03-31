@@ -1,33 +1,19 @@
 from abstract_classes import *
 
-def depth_first_search():
+def depth_first_search(problem):
     print('\nRunning DFS algorithm...\n')
 
-    
-    n1 = Node(1)
-    n2 = Node(2)
-    n3 = Node(3)
-
-    routeGraph = RouteGraph()
-    routeGraph.connect(n1, n2, 4)
-    routeGraph.connect(n2, n3, 4)
-
-    problem = RouteFindingProblem(n1, [n3], routeGraph)
-
-    print(problem.find_min_edge())
-
-
-def breadth_first_search():
+def breadth_first_search(problem):
     raise NotImplementedError
 
-def greedy_best_first_search():
+def greedy_best_first_search(problem):
     raise NotImplementedError
 
-def a_star_search():
+def a_star_search(problem):
     raise NotImplementedError
 
-def custom_algorithm_1():
+def custom_algorithm_1(problem):
     raise NotImplementedError
 
-def custom_algorithm_2():
+def custom_algorithm_2(problem):
     raise NotImplementedError

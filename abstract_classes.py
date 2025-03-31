@@ -4,7 +4,6 @@ class Node:
     def __init__(self, state):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
-        self.depth = 0
 
     def __repr__(self):
         return "<Node {}>".format(self.state)
@@ -62,7 +61,7 @@ class RouteGraph:
         return list(nodes)
 
 
-class RouteFindingProblem(Problem):
+class RouteFindingProblem():
     """
     The problem of searching a RouteGraph to traverse from a given Node to any one of the listed destination Nodes
 

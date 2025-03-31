@@ -7,8 +7,9 @@ from src.utils import *
 from abstract_classes import *
 from search_algorithms import *
 
-
-
+nodes = {};
+graph = RouteGraph();
+problem = None;
 
 def get_data(filename):
     wrong_format_error = "\nInput file is not written in the correct format.\n"
@@ -25,9 +26,7 @@ def get_data(filename):
     node_pattern = r'^\d+: \(\d+,\d+\)$'    # RegEx for the text format, '#: (#,#)'
 
     while re.match(node_pattern, lines[i]) and int(lines[i][0]) == node_id:  # While the line contains ascending node IDs (1,2,3,...) and are in the correct format ('#: (#,#)')
-        # TODO:
-        # - Create new 'Node' objects for each input line.
-        # - Follow the examples from the reference files (in 'READONLY_Resources') to make sure they are set up properly.
+        nodes[node_id] = Node(node_id)
 
         node_id += 1
         i += 1
@@ -37,28 +36,31 @@ def get_data(filename):
 
     edge_pattern = r'^\(\d+,\d+\): \d+$'  # RegEx for the text format, '(#,#): #'
     while re.match(edge_pattern, lines[i]):
-        # TODO:
-        # - Figure out how to associate these edges with the existing nodes.
+        s = nodes[int(lines[i][1])]     # state         - the 'from' address
+        t = nodes[int(lines[i][3])]     # transition    - the 'to' address
+        c = int(lines[i][7])            # cost          - the expense of traversing
+
+        graph.connect(s, t, c)
         i += 1
 
     assert lines[i] == "" and lines[i+1] == "Origin:" and lines[i+2].isnumeric(), wrong_format_error
-    i += 3
+    i += 2
 
-    # TODO:
-    # - Save the 'Origin:' value into a variable
+    origin = lines[i]
+    i += 1
 
     assert lines[i] == "Destinations:"
     i += 1
 
-    destination_pattern = r'^\d(; \d)*$' # RegEx for the text format, '#' or '#; #; ... #'
-    assert re.match(destination_pattern, lines[i]), wrong_format_error
+    destinations_pattern = r'^\d+(; \d+)*$' # RegEx for the text format, '#' or '#; #; ... #'
+    assert re.match(destinations_pattern, lines[i]), wrong_format_error
     
-    # TODO:
-    # - Save the 'Destinations:' values into a variable
+    destinations = []
+    destination_values_pattern = r'\d+'      # RegEx for retrieving only the numbers between the '; ' dividers
+    for dest in re.findall(destination_values_pattern, lines[i]):
+        destinations.append(dest)
 
-
-
-
+    problem = RouteFindingProblem(origin, destinations, graph)
 
 
 if __name__ == "__main__":
@@ -103,17 +105,17 @@ commands:
     # READ <method> ARGUMENT
     match sys.argv[2]:
         case "DFS":
-            depth_first_search()
+            depth_first_search(problem)
         case "BFS":
-            breadth_first_search()
+            breadth_first_search(problem)
         case "GBFS":
-            greedy_best_first_search()
+            greedy_best_first_search(problem)
         case "AS" | "A*":
-            a_star_search()
+            a_star_search(problem)
         case "CUS1":
-            custom_search_algorithm_1()
+            custom_search_algorithm_1(problem)
         case "CUS1":
-            custom_search_algorithm_2()
+            custom_search_algorithm_2(problem)
         case _:
             # Print '...(method) does not exist...' if the user enters a method that does not exist
             print(f"\nSearch method \'{sys.argv[2]}\' does not exist.\nType \'python search.py -h\' for a list of commands.\n")

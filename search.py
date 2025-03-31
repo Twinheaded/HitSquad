@@ -2,12 +2,15 @@ import sys
 import re
 from collections import deque
 
-from utils import *
+from src.utils import *
 
-from abstract_classes import *
+from classes import *
 from search_algorithms import *
 
-def get_data(filename):
+def parse_problem(filename):
+    nodes = {}
+    graph = RouteGraph()
+    
     wrong_format_error = "\nInput file is not written in the correct format.\n"
 
     with open(filename) as f:
@@ -22,9 +25,7 @@ def get_data(filename):
     node_pattern = r'^\d+: \(\d+,\d+\)$'    # RegEx for the text format, '#: (#,#)'
 
     while re.match(node_pattern, lines[i]) and int(lines[i][0]) == node_id:  # While the line contains ascending node IDs (1,2,3,...) and are in the correct format ('#: (#,#)')
-        # TODO:
-        # - Create new 'Node' objects for each input line.
-        # - Follow the examples from the reference files (in 'READONLY_Resources') to make sure they are set up properly.
+        nodes[node_id] = Node(node_id)
 
         node_id += 1
         i += 1
@@ -34,32 +35,33 @@ def get_data(filename):
 
     edge_pattern = r'^\(\d+,\d+\): \d+$'  # RegEx for the text format, '(#,#): #'
     while re.match(edge_pattern, lines[i]):
-        # TODO:
-        # - Figure out how to associate these edges with the existing nodes.
+        s = nodes[int(lines[i][1])]     # state         - the 'from' address
+        t = nodes[int(lines[i][3])]     # transition    - the 'to' address
+        c = int(lines[i][7])            # cost          - the expense of traversing
+
+        graph.connect(s, t, c)
         i += 1
 
     assert lines[i] == "" and lines[i+1] == "Origin:" and lines[i+2].isnumeric(), wrong_format_error
-    i += 3
+    i += 2
 
-    # TODO:
-    # - Save the 'Origin:' value into a variable
+    origin = lines[i]
+    i += 1
 
     assert lines[i] == "Destinations:"
     i += 1
 
-    destination_pattern = r'^\d(; \d)*$' # RegEx for the text format, '#' or '#; #; ... #'
-    assert re.match(destination_pattern, lines[i]), wrong_format_error
+    destinations_pattern = r'^\d+(; \d+)*$' # RegEx for the text format, '#' or '#; #; ... #'
+    assert re.match(destinations_pattern, lines[i]), wrong_format_error
     
-    # TODO:
-    # - Save the 'Destinations:' values into a variable
+    destinations = []
+    destination_values_pattern = r'\d+'      # RegEx for retrieving only the numbers between the '; ' dividers
+    for dest in re.findall(destination_values_pattern, lines[i]):
+        destinations.append(nodes[int(dest)])
 
+    return RouteFindingProblem(origin, destinations, graph)
 
-
-
-
-
-if __name__ == "__main__":
-
+def validate_args():
     # The following text is printed if the user inputs '-h', '--h', or a command with too little arguments
     help_string = (
 """
@@ -93,14 +95,18 @@ commands:
                 print(f"\nInvalid command: \'{sys.argv[1]}\'\nType \'python search.py -h\' for a list of commands.\n")
                 exit(0)
 
+
+if __name__ == "__main__":
+    validate_args();
+
     # READ <filename> ARGUMENT
     filename = sys.argv[1]
-    get_data(filename)
+    problem = parse_problem(filename)
 
     # READ <method> ARGUMENT
     match sys.argv[2]:
         case "DFS":
-            depth_first_search()
+            depth_first_search(problem)
         case "BFS":
             breadth_first_search()
         case "GBFS":

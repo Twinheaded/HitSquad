@@ -7,11 +7,10 @@ from src.utils import *
 from classes import *
 from search_algorithms import *
 
-nodes = {};
-graph = RouteGraph();
-problem = None;
-
-def get_data(filename):
+def parse_problem(filename):
+    nodes = {}
+    graph = RouteGraph()
+    
     wrong_format_error = "\nInput file is not written in the correct format.\n"
 
     with open(filename) as f:
@@ -58,13 +57,11 @@ def get_data(filename):
     destinations = []
     destination_values_pattern = r'\d+'      # RegEx for retrieving only the numbers between the '; ' dividers
     for dest in re.findall(destination_values_pattern, lines[i]):
-        destinations.append(dest)
+        destinations.append(nodes[int(dest)])
 
-    problem = RouteFindingProblem(origin, destinations, graph)
+    return RouteFindingProblem(origin, destinations, graph)
 
-
-if __name__ == "__main__":
-
+def validate_args():
     # The following text is printed if the user inputs '-h', '--h', or a command with too little arguments
     help_string = (
 """
@@ -98,24 +95,28 @@ commands:
                 print(f"\nInvalid command: \'{sys.argv[1]}\'\nType \'python search.py -h\' for a list of commands.\n")
                 exit(0)
 
+
+if __name__ == "__main__":
+    validate_args();
+
     # READ <filename> ARGUMENT
     filename = sys.argv[1]
-    get_data(filename)
+    problem = parse_problem(filename)
 
     # READ <method> ARGUMENT
     match sys.argv[2]:
         case "DFS":
             depth_first_search(problem)
         case "BFS":
-            breadth_first_search(problem)
+            breadth_first_search()
         case "GBFS":
-            greedy_best_first_search(problem)
+            greedy_best_first_search()
         case "AS" | "A*":
-            a_star_search(problem)
+            a_star_search()
         case "CUS1":
-            custom_search_algorithm_1(problem)
+            custom_search_algorithm_1()
         case "CUS1":
-            custom_search_algorithm_2(problem)
+            custom_search_algorithm_2()
         case _:
             # Print '...(method) does not exist...' if the user enters a method that does not exist
             print(f"\nSearch method \'{sys.argv[2]}\' does not exist.\nType \'python search.py -h\' for a list of commands.\n")

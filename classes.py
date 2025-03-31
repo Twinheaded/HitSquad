@@ -10,11 +10,8 @@ class Node:
     def __eq__(self, other):
         return isinstance(other, Node) and self.state == other.state
 
+    # The object will be referred to by its hash value instead of the object itself
     def __hash__(self):
-        # We use the hash value of the state
-        # stored in the node instead of the node
-        # object itself to quickly search a node
-        # with the same state in a Hash Table
         return hash(self.state)
 
     
@@ -75,20 +72,28 @@ class RouteFindingProblem():
         self.goal = goal
         self.graph = graph
 
-    def actions(self, A):
+    # Given a state 's':
+    # Actions(s) returns a set of actions/choices the agent can take when in state 's'. 
+    def actions(self, s):
         """The current node can traverse to any other node as long as it is connected by an edge (in the correct
         direction)"""
-        return list(self.graph.get(A).keys())
+        return self.graph.get(s)
 
-    def result(self, state, action):
-        """The result of going to a neighbor is just that neighbor."""
-        return action
+    # Given an action 'a' and state 's':
+    # Result(s,a) returns the state resulting from executing the action 'a' in state 's'.
+    def result(self, s, a):
+        """The result of going to a neighbor is just that neighbor. Make sure that the traversal is possible."""
+        if a in self.actions(s):
+            return a
 
-    def goal_test(self, state):
+    # Checks if current state 's' is a goal state
+    def goal_test(self, s):
         if isinstance(self.goal, list):
-            return is_in(state, self.goal)
+            return s in self.goal
 
+    # Returns the cost of traversing from A to B
     def path_cost(self, A, B, cost_so_far=0):
+        """cost_so_far stores the value of g(n) for search algorithms like A*"""
         return cost_so_far + (self.graph.get(A, B) or np.inf)
 
     def find_min_edge(self):

@@ -4,7 +4,7 @@ from collections import deque
 
 from src.utils import *
 
-from abstract_classes import *
+from classes import *
 from search_algorithms import *
 
 nodes = {};

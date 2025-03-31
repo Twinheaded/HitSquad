@@ -1,4 +1,4 @@
-from abstract_classes import *
+from classes import *
 
 def depth_first_search(problem):
     print('\nRunning DFS algorithm...\n')

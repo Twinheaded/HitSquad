@@ -66,7 +66,7 @@ def main(argv):
     parser.add_argument(
         "--searchalgo",
         default="BFS",
-        help="Specific Scat Value."
+        help="Specify Searching Algorithm."
     )
     args = parser.parse_args()
 

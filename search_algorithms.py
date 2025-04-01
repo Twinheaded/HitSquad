@@ -6,6 +6,26 @@ import pandas as pd
 from queue import Queue
 from collections import deque
 
+
+#############################################################################
+# ALGORITHMS TO FINISH
+
+def depth_first_search():
+    raise NotImplementedError
+
+def greedy_best_first_search():
+    raise NotImplementedError
+
+def a_star_search():
+    raise NotImplementedError
+
+def custom_algorithm_1():
+    raise NotImplementedError
+
+def custom_algorithm_2():
+    raise NotImplementedError
+
+
 #############################################################################
 # AARON'S CODE (+objects)
 
@@ -62,12 +82,7 @@ def breadth_first_search (problem): # Using Queue because of LIFO
         
 #     return finalpaths
 
-
 #############################################################################
-
-
-
-
 
 #############################################################################
 # JACK'S CODE
@@ -113,21 +128,5 @@ def depth_first_search(problem):
 
     # (returns) an int; the lowest edge cost in the environment
     print(problem.find_min_edge())
-
-
-# def breadth_first_search():
-#     raise NotImplementedError
-
-# def greedy_best_first_search():
-#     raise NotImplementedError
-
-# def a_star_search():
-#     raise NotImplementedError
-
-# def custom_algorithm_1():
-#     raise NotImplementedError
-
-# def custom_algorithm_2():
-#     raise NotImplementedError
 
 #############################################################################

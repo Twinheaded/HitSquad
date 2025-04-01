@@ -7,7 +7,7 @@ from search_algorithms import *
 
 def File_Reader(file):
 
-    wrong_format_error = "\nInput file is not written in the correct format.\n" # NEW
+    wrong_format_error = "\nInput file is not written in the correct format.\n"
     nodes = {} # Nodes
 
     f = open(file, "r")
@@ -36,16 +36,14 @@ def File_Reader(file):
         metric = f.readline().strip()
 
     assert f.readline().strip() == 'Origin:', wrong_format_error
-    origin = nodes[int(f.readline().strip())] # Origin (Numeric)
+    origin = nodes[int(f.readline().strip())] # Origin (Node)
 
     assert f.readline().strip() == 'Destinations:', wrong_format_error
     destinations = f.readline().strip() # Destinations
     assert re.match(r'^\d+(; \d+)*$', destinations), wrong_format_error # RegEx for '#' or '#; #; ... #'
-
     destinations = [nodes[int(i.lstrip())] for i in destinations.split(";")] 
 
     return RouteFindingProblem(origin, destinations, graph)
-
 
 # This is won't be needed, since the Problem.path_cost() method handles it 
 ############################################################################

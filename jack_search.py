@@ -4,7 +4,7 @@ from collections import deque
 
 from src.utils import *
 
-from classes import *
+from jack_classes import *
 from search_algorithms import *
 
 def parse_problem(filename):

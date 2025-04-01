@@ -1,3 +1,5 @@
+import numpy as np
+
 class Node:
     def __init__(self, state):
         """Create a search tree Node, derived from a parent by an action."""
@@ -107,3 +109,4 @@ class RouteFindingProblem():
 
     # def h(self, node):
     #     # TODO: Implement an appropriate heuristic
+

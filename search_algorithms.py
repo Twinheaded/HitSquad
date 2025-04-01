@@ -7,29 +7,60 @@ from queue import Queue
 from collections import deque
 
 #############################################################################
-# AARON'S CODE
+# AARON'S CODE (+objects)
 
-def breadth_first_search (origin, destinations, graph): # Using Queue because of LIFO
+def breadth_first_search (problem): # Using Queue because of LIFO
+    actions      = problem.actions
+    goal_test    = problem.goal_test
+    origin       = problem.initial
+    destinations = problem.goal
+    
     finalpaths = {} # Dictionary containing all final paths selected for each destination in destination
     
-    visited = [origin] # marks all visited nodes 
-    start_path = [origin] # Beginning Path, only contains origin
+    visited = [origin]                      # marks all visited nodes 
+    start_path = [origin]                   # Beginning Path, only contains origin
     frontier = Queue() 
     frontier.put(start_path) 
     while not frontier.empty(): 
-        path = frontier.get() #Pulls First value
-        last_node = path[-1] #Checks last node from value
-        if last_node in destinations: #Checks last node
-                finalpaths[last_node] = path 
-                if len(finalpaths) == len(destinations):
-                    return finalpaths
-        for n in graph.get(last_node, []):  # For all possible neighbours
+        path = frontier.get()               # Pulls First value
+        last_node = path[-1]                # Checks last node from value
+        if goal_test(last_node):            # Is the current state a goal state?
+            finalpaths[last_node] = path 
+            if len(finalpaths) == len(destinations):
+                return finalpaths
+        for n in actions(last_node):        # For all possible neighbours
             if n not in visited:
                 visited.append(n)
-                new_path = path + [n]
-                frontier.put(new_path) # adds to the frontier
+                frontier.put(path + [n])    # adds to the frontier
         
     return finalpaths
+
+#############################################################################
+
+#############################################################################
+# AARON'S CODE
+
+# def breadth_first_search (origin, destinations, graph): # Using Queue because of LIFO
+#     finalpaths = {} # Dictionary containing all final paths selected for each destination in destination
+    
+#     visited = [origin] # marks all visited nodes 
+#     start_path = [origin] # Beginning Path, only contains origin
+#     frontier = Queue() 
+#     frontier.put(start_path) 
+#     while not frontier.empty(): 
+#         path = frontier.get() #Pulls First value
+#         last_node = path[-1] #Checks last node from value
+#         if last_node in destinations: #Checks last node
+#                 finalpaths[last_node] = path 
+#                 if len(finalpaths) == len(destinations):
+#                     return finalpaths
+#         for n in graph.get(last_node, []):  # For all possible neighbours
+#             if n not in visited:
+#                 visited.append(n)
+#                 new_path = path + [n]
+#                 frontier.put(new_path) # adds to the frontier
+        
+#     return finalpaths
 
 
 #############################################################################

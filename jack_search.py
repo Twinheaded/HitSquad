@@ -70,7 +70,7 @@ usage: search.py [-h] <filename> <method>
 options:
     -h, --help      Show this help message and exit.
 
-commands:
+methods:
     DFS             Depth-first search
     BFS             Breadth-first search
     GBFS            Greedy best-first search

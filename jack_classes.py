@@ -1,9 +1,11 @@
 import numpy as np
 
 class Node:
-    def __init__(self, state):
+    def __init__(self, state, x, y):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
+        self.x = x
+        self.y = y
 
     def __repr__(self):
         return "<Node {}>".format(self.state)
@@ -17,14 +19,8 @@ class Node:
         return hash(self.state)
 
     
-class RouteGraph:
+class Graph:
     """Stores the paths between the Nodes (Edges) and their associated cost of traversal
-
-    Typical use:
-        routeGraph = RouteGraph()
-        routeGraph.connect(node1, node2, 5)
-        routeGraph.connect(node1, node3, 1)
-        print(routeGraph.get(node1))
 
     Attributes:
         graph_dict: The mapping of each Node to its Edges. E.g., {<Node 1>: {<Node 2>: 5, <Node 3>: 1}}
@@ -60,13 +56,13 @@ class RouteGraph:
 
 class RouteFindingProblem():
     """
-    The problem of searching a RouteGraph to traverse from a given Node to any one of the listed destination Nodes
+    The problem of searching a Graph to traverse from a given Node to any one of the listed destination Nodes
 
     Attributes:
         graph_dict: The mapping of each Node to its Edges. E.g., {<Node 1>: {<Node 2>: 5, <Node 3>: 1}}
         initial: A Node from which the search begins.
         goal: A list of Nodes that the search will terminate at. E.g., [node1, node2]
-        graph: A RouteGraph which stores all of the Edges that connect the Nodes
+        graph: A Graph which stores all of the Edges that connect the Nodes
     """
 
     def __init__(self, initial, goal, graph):

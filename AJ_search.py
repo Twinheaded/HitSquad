@@ -63,10 +63,10 @@ def main(argv):
         help="Specify Searching Algorithm."
     )
     args = parser.parse_args()
-    method = args.searchalgo
+    method = args.method
     method = "A*" if method == "AS" else method
 
-    problem = File_Reader(args.file)
+    problem = File_Reader(args.filename)
 
     result = {}
 

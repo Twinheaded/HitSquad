@@ -6,12 +6,58 @@ import pandas as pd
 from queue import Queue
 from collections import deque
 
+# TEMP
+from jack_classes import *
 
 #############################################################################
 # ALGORITHMS TO FINISH
 
-def depth_first_search():
-    raise NotImplementedError
+def depth_first_search(problem):
+    # n1 = Node(1,1,1)
+    # n2 = Node(2,2,2)
+    # n3 = Node(3,3,3)
+    # graph = Graph()
+    # graph.connect(n1,n2,5)
+    # graph.connect(n2,n3,5)
+
+    # problem = RouteFindingProblem(n1, [n2, n3], graph)
+
+    init = problem.initial       # The first Node (origin)
+    goal_test = problem.goal_test
+    actions = problem.actions
+    
+    frontier = [init]
+    explored = []
+    
+    while frontier:
+        s = frontier.pop()          # state - the current node
+
+        if s in explored:
+            frontier.pop()
+
+        if goal_test(s):
+            print("")
+            print("GOAL REACHED")
+            frontier.append(s)
+            result = [init]
+            result.extend(frontier)
+            return f"{s} reached. Path: {result}"
+
+        explored.append(s)
+
+        actions_sorted = list(actions(s).keys())
+        actions_sorted.reverse()
+
+        print("---------")
+        print("STATE:", s)
+        for a in actions_sorted:
+            if not (a in explored or a in frontier):
+                frontier.append(a)
+
+        print("Actions:", actions(s))
+        print("FRONTIER:", frontier)
+        
+    return None
 
 def greedy_best_first_search():
     raise NotImplementedError
@@ -87,9 +133,7 @@ def breadth_first_search (problem): # Using Queue because of LIFO
 #############################################################################
 # JACK'S CODE
 
-def depth_first_search(problem):
-    print('\nRunning DFS algorithm...\n')
-
+def example_search_algorithm(problem):
     #######################################
     # EXPLANATION OF THE 'problem' OBJECT #
     #######################################

@@ -74,17 +74,17 @@ def main(argv):
 
     match args.searchalgo:
         case "DFS":
-            result = breadth_first_search()
+            result = depth_first_search(problem)
         case "BFS":
             result = breadth_first_search(problem)
         case "GBFS":
-            result = greedy_best_first_search()
+            result = greedy_best_first_search(problem)
         case "AS" | "A*":
-            result = a_star_search()
+            result = a_star_search(problem)
         case "CUS1":
-            result = custom_search_algorithm_1()
+            result = custom_search_algorithm_1(problem)
         case "CUS2":
-            result = custom_search_algorithm_2()
+            result = custom_search_algorithm_2(problem)
         case _:
             # Print '...(method) does not exist...' if the user enters a method that does not exist
             print(f"\nSearch method \'{sys.argv[2]}\' does not exist.\nType \'python search.py -h\' for a list of commands.\n")

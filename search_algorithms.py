@@ -3,6 +3,7 @@ import warnings
 import argparse
 import numpy as np
 import pandas as pd
+import heapq
 from queue import Queue
 from collections import deque
 
@@ -56,11 +57,45 @@ def depth_first_search(problem):
 
         print("Actions:", actions(s))
         print("FRONTIER:", frontier)
-        
     return None
 
-def greedy_best_first_search():
-    raise NotImplementedError
+def greedy_best_first_search(problem):
+    ### Greedy Best First Search always expands the node that appears to be closest to goal ###
+
+    def heuristic(node): 
+        min_dist = float('inf') # infinite
+        for goal in problem.goal: 
+            dist = abs(node.x - goal.x) + abs(node.y - goal.y) #Manhattan Distance Formula
+            if dist < min_dist: # finds the smallest distance
+                min_dist = dist 
+        return mindist
+
+    origin = problem.initial
+    frontier = [] #for a priority queue
+    heapq.heappush(frontier, (heuristic(origin), [origin])) # heuristic value, path
+    explored = set() # marks all visited nodes
+    finalpaths = {} # Dictionary containing all final paths selected for each destination
+
+    while frontier: 
+        , path = heapq.heappop(frontier) # pulls first value
+        node = path[-1] # checks last node
+
+        if problem.goal_test(node):
+            finalpaths[node] = path 
+            if len(finalpaths) == len(problem.goal): # checks if all paths have been found
+                return finalpaths
+
+        if node not in explored:
+            explored.add(node)
+            for neighbor in problem.actions(node):
+                if neighbor not in explored:
+                    new_path = path + [neighbor] # adds to the frontier
+                    heapq.heappush(frontier, (heuristic(neighbor), new_path)) 
+
+    return finalpaths
+
+# def greedy_best_first_search():
+#     raise NotImplementedError
 
 def a_star_search():
     raise NotImplementedError

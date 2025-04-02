@@ -8,7 +8,7 @@ class Node:
         self.y = y
 
     def __repr__(self):
-        return "<Node {}>".format(self.state)
+        return f"{self.state}"
 
     # This will be used for eliminating repeated states (e.g., in GBFS and A* search methods)
     def __eq__(self, other):

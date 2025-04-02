@@ -7,57 +7,51 @@ import heapq
 from queue import Queue
 from collections import deque
 
-# TEMP
 from jack_classes import *
 
 #############################################################################
-# ALGORITHMS TO FINISH
+# JACK'S CODE
+
+def print_step(state, explored, action_details, frontier):
+    print("====================")
+    print("STATE:", state)
+    print("\nAvailable actions:")
+    if action_details:
+        for x in reversed(action_details):
+            print("->", x)
+        print("")
+    else:
+        print("None\n")
+    print("FRONTIER:", frontier)
+    
+    # print("--------------------")
+    print("EXPLORED:", explored)
+    print("====================")
+    print("         |")
+    print("         v")
+
 
 def depth_first_search(problem):
-    # n1 = Node(1,1,1)
-    # n2 = Node(2,2,2)
-    # n3 = Node(3,3,3)
-    # graph = Graph()
-    # graph.connect(n1,n2,5)
-    # graph.connect(n2,n3,5)
-
-    # problem = RouteFindingProblem(n1, [n2, n3], graph)
-
-    init = problem.initial       # The first Node (origin)
-    goal_test = problem.goal_test
-    actions = problem.actions
-    
-    frontier = [init]
+    frontier = [(problem.initial, [])]       # The first Node (origin)
     explored = []
-    
+
     while frontier:
-        s = frontier.pop()          # state - the current node
-
-        if s in explored:
-            frontier.pop()
-
-        if goal_test(s):
-            print("")
-            print("GOAL REACHED")
-            frontier.append(s)
-            result = [init]
-            result.extend(frontier)
-            return f"{s} reached. Path: {result}"
-
-        explored.append(s)
-
-        actions_sorted = list(actions(s).keys())
-        actions_sorted.reverse()
-
-        print("---------")
-        print("STATE:", s)
-        for a in actions_sorted:
-            if not (a in explored or a in frontier):
-                frontier.append(a)
-
-        print("Actions:", actions(s))
-        print("FRONTIER:", frontier)
+        s = frontier.pop()          # state - the current node and its path
+        node = s[0]
+        path = s[1]
+        if problem.goal_test(node):
+            return path + [node]
+        explored.append(node)
+        actions = [n for n in reversed(problem.actions(node).keys())]
+        for a in actions:
+            if not a in explored:
+                frontier.append((a, path + [node]))
+        print_step(node, explored, actions, [n[0] for n in frontier])
     return None
+#############################################################################
+
+#############################################################################
+# JORDAN'S CODE
 
 def greedy_best_first_search(problem):
     ### Greedy Best First Search always expands the node that appears to be closest to goal ###
@@ -68,7 +62,7 @@ def greedy_best_first_search(problem):
             dist = abs(node.x - goal.x) + abs(node.y - goal.y) #Manhattan Distance Formula
             if dist < min_dist: # finds the smallest distance
                 min_dist = dist 
-        return mindist
+        return min_dist
 
     origin = problem.initial
     frontier = [] #for a priority queue
@@ -77,7 +71,7 @@ def greedy_best_first_search(problem):
     finalpaths = {} # Dictionary containing all final paths selected for each destination
 
     while frontier: 
-        , path = heapq.heappop(frontier) # pulls first value
+        path = heapq.heappop(frontier) # pulls first value
         node = path[-1] # checks last node
 
         if problem.goal_test(node):
@@ -94,8 +88,8 @@ def greedy_best_first_search(problem):
 
     return finalpaths
 
-# def greedy_best_first_search():
-#     raise NotImplementedError
+
+
 
 def a_star_search():
     raise NotImplementedError
@@ -166,7 +160,7 @@ def breadth_first_search (problem): # Using Queue because of LIFO
 #############################################################################
 
 #############################################################################
-# JACK'S CODE
+# EXAMPLE USAGE OF THE PROBLEM OBJECT
 
 def example_search_algorithm(problem):
     #######################################

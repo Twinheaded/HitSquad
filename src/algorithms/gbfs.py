@@ -1,5 +1,4 @@
 from .search_method import SearchMethod
-import heapq;
 
 # Philip / Jack
 # ============================================================
@@ -25,10 +24,13 @@ import heapq;
 #         return None
 
 
-class GBFS:
+# Jordan
+# ============================================================
+import heapq;
+class GBFS(SearchMethod):
     ###Greedy Best-First Search (GBFS) using Euclidean distance heuristic.###
     
-    # These are defined in search_algorithm.py (parent class)
+    # > These are defined in search_algorithm.py (parent class) - Jack
     # ------------------------------------------------------------
     # def __init__(self, problem): 
     #     self.problem = problem 
@@ -36,7 +38,7 @@ class GBFS:
     #     self.explored = set()  
     #     self.final_paths = {}
     
-    # This has now been added to search_algorithm.py 
+    # > This has now been added to search_algorithm.py - Jack
     # -------------------------------------------------------------
     # def heuristic(self, node):
     #     ###Computes the minimum Euclidean distance from node to any goal.###

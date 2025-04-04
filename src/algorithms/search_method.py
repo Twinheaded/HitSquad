@@ -35,6 +35,7 @@ class SearchMethod:
             print("None\n")
         print("FRONTIER:", self.frontier)
         print("EXPLORED:", self.explored)
+        print("GOAL:", " or ".join(map(str, self.problem.goal)))
         print("=================")
         print("        |")
         print("        v")

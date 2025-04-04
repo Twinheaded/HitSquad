@@ -26,22 +26,26 @@ import heapq;
 class GBFS:
     ###Greedy Best-First Search (GBFS) using Euclidean distance heuristic.###
     
-    def __init__(self, problem): 
-        self.problem = problem 
-        self.frontier = []  
-        self.explored = set()  
-        self.final_paths = {}
+    # These are defined in search_algorithm.py (parent class)
+    # ------------------------------------------------------------
+    # def __init__(self, problem): 
+    #     self.problem = problem 
+    #     self.frontier = []  
+    #     self.explored = set()  
+    #     self.final_paths = {}
     
-    def heuristic(self, node):
-        ###Computes the minimum Euclidean distance from node to any goal.###
-        min_dist = float('inf')
-        for goal in self.problem.goal:
-            dx = node.x - goal.x
-            dy = node.y - goal.y
-            dist = math.sqrt(dx**2 + dy**2)  # Euclidean distance
-            if dist < min_dist:
-                min_dist = dist
-        return min_dist
+    # This has now been added to search_algorithm.py 
+    # -------------------------------------------------------------
+    # def heuristic(self, node):
+    #     ###Computes the minimum Euclidean distance from node to any goal.###
+    #     min_dist = float('inf')
+    #     for goal in self.problem.goal:
+    #         dx = node.x - goal.x
+    #         dy = node.y - goal.y
+    #         dist = math.sqrt(dx**2 + dy**2)  # Euclidean distance
+    #         if dist < min_dist:
+    #             min_dist = dist
+    #     return min_dist
     
     def search(self):
         ###Runs GBFS and returns the paths to all goals.###

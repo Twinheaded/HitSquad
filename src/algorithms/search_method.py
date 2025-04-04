@@ -1,5 +1,8 @@
+import math
+
 from ..problem import Problem
 from ..node import Node
+
 
 class SearchMethod:
     def __init__(self, problem):
@@ -11,13 +14,14 @@ class SearchMethod:
         raise NotImplementedError
 
     def distance_heuristic(self, node):
+        ###Computes the minimum Euclidean distance from node to any goal.###
         if node in self.problem.goal:
             return 0
-        x1, y1 = node.coordinates
         min_dist = float('inf')
-        for d in self.problem.goal:
-            x2, y2 = d.coordinates
-            dist = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
+        for goal in self.problem.goal:
+            dx = node.coordinates[0] - goal.coordinates[0]
+            dy = node.coordinates[1] - goal.coordinates[1]
+            dist = math.sqrt(dx**2 + dy**2)  # Euclidean distance
             if dist < min_dist:
                 min_dist = dist
         return min_dist

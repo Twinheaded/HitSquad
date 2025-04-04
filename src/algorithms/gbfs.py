@@ -1,6 +1,8 @@
 from .search_method import SearchMethod
 import heapq;
 
+# Philip / Jack
+# ============================================================
 # class GBFS(SearchMethod):
 #     def search(self):
 #         goal_test, get_actions = self.problem.goal_test, self.problem.get_actions # Methods

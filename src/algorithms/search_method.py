@@ -7,7 +7,7 @@ from ..node import Node
 class SearchMethod:
     def __init__(self, problem):
         self.problem = problem
-        self.frontier = [(problem.initial, [])]
+        self.frontier = [(problem.initial, [])] # [(<Node>, [<path>, <from>, <origin>])]
         self.explored = []
 
     def search(self):

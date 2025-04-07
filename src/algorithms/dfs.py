@@ -5,7 +5,6 @@ from .search_method import SearchMethod
 class DFS(SearchMethod):
     def search(self):
         goal_test, get_actions = self.problem.goal_test, self.problem.get_actions # Methods
-        h = self.distance_heuristic
 
         while self.frontier:
             node, path = self.frontier.pop()          # state - the current node
@@ -19,6 +18,6 @@ class DFS(SearchMethod):
                 if not a in self.explored:
                     self.frontier.append((a, path))
             ################
-            self.print_state(node, get_actions(node)) # <-- For debugging only
+            # self.print_state(node, get_actions(node)) # <-- For debugging only
             ################
         return None

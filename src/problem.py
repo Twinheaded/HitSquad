@@ -5,7 +5,8 @@ class Problem():
     Contains all nodes and connecting edges.
     """
 
-    def __init__(self, initial, goal, edges):
+    def __init__(self, nodes, initial, goal, edges):
+        self.nodes = nodes      # [<Node>, <Node>, ...] - All nodes in the problem
         self.initial = initial  # <Node> - first node of the search
         self.goal = goal        # [<Node>, <Node>, ...] - a list of goal states
         self.edges = edges      # {<Node>:{<Node>:<cost>, <Node>:<cost>, ...}, ...}

@@ -12,7 +12,7 @@ class FileParser:
         self.edges = {}         # {<Node>:{<action>:<cost>, <action>:<cost>, ...}, ...}
 
     def create_problem(self):
-        return Problem(self.init, self.goal, self.edges)
+        return Problem([n for n in self.nodes_by_id.values()], self.init, self.goal, self.edges)
         
     def parse(self, filename):
         format_error = "\nInput file is not written in the correct format.\n"

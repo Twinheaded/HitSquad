@@ -197,7 +197,7 @@ def main():
     method = sys.argv[2].upper()
     
     graph, origin, destinations, coords = parse_file(filename)
-    
+
     if method == "DFS":
         result, nodes_created, path = dfs(graph, origin, destinations)
     elif method == "BFS":
@@ -218,8 +218,8 @@ def main():
         print("No path found")
     else:
         print(f"{filename} {method}")
-        print(f"{result} {nodes_created}")
-        print(" -> ".join(map(str, path)))
+        print(f"{coords[result]} {nodes_created}")
+        print(", ".join(map(str, path)))
 
 if __name__ == "__main__":
     main()

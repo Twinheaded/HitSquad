@@ -40,7 +40,7 @@ LARGE_FONT = pygame.font.SysFont('Arial', 24)
 
 class GraphGenerator:
     @staticmethod
-    def generate_random(num_nodes=10, edge_density=0.6):
+    def generate_random(num_nodes=10, edge_density=0.2):
         nodes = []
         for node_id in range(1, num_nodes + 1):
             while True:

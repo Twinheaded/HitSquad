@@ -3,9 +3,7 @@ from .search_method import SearchMethod
 # Jack
 # ============================================================
 class DFS(SearchMethod):
-    def __init__(self, problem):
-        super().__init__(problem)
-        self.name = "DFS"
+    name = "DFS"
 
     def search(self):
         goal_test, get_actions = self.problem.goal_test, self.problem.get_actions # Methods

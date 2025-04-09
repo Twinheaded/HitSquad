@@ -1,4 +1,4 @@
-import math
+# import math
 
 from ..problem import Problem
 from ..node import Node
@@ -8,7 +8,9 @@ class SearchMethod:
     def __init__(self, problem):
         self.problem = problem
         self.frontier = [(problem.initial, [])] # [(<Node>, [<path>, <from>, <origin>])]
-        self.explored = []
+        self.explored = []      # [<Node>, <Node>, <Node>, ...]
+        self.result = None      # <Node>
+        self.final_path = []    # [<Node>, <Node>, <Node>, ...]
 
     def search(self):
         raise NotImplementedError
@@ -21,7 +23,7 @@ class SearchMethod:
         for goal in self.problem.goal:
             dx = node.coordinates[0] - goal.coordinates[0]
             dy = node.coordinates[1] - goal.coordinates[1]
-            dist = math.sqrt(dx**2 + dy**2)  # Euclidean distance
+            dist = (dx**2 + dy**2)**0.5  # Euclidean distance
             if dist < min_dist:
                 min_dist = dist
         return min_dist

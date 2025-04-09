@@ -3,9 +3,7 @@ from .search_method import SearchMethod
 # Philip / Jack
 # ============================================================
 class GBFS(SearchMethod):
-    def __init__(self, problem):
-        super().__init__(problem)
-        self.name = "DFS"
+    name = "GBFS"
 
     def search(self):
         goal_test, get_actions = self.problem.goal_test, self.problem.get_actions # Methods
@@ -25,7 +23,7 @@ class GBFS(SearchMethod):
                 if not a in self.explored:
                     self.frontier.append((a, path))
             ################
-            # self.print_state(node, get_actions(node)) # <-- For debugging only
+            self.print_state(node, get_actions(node)) # <-- For debugging only
             ################
 
 

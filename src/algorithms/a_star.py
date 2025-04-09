@@ -1,6 +1,8 @@
 from .search_method import SearchMethod
 
 class AS(SearchMethod):
+    name = "A*"
+
     def search(self):
         goal_test, get_actions = self.problem.goal_test, self.problem.get_actions # Methods
         h = self.distance_heuristic

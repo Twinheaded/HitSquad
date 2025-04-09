@@ -129,7 +129,7 @@ def draw_graph(problem, path=None, explored=None, algorithm="BFS"): # Draw graph
 
     if explored:
         path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {','.join(map(str, explored))}"
-    screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
+        screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
 
     if path:
         path_text = f"Final path: [{','.join(map(str, path))}] (Edges: {len(path)-1})"

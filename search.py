@@ -48,10 +48,11 @@ def main(argv):
             print(f"\nSearch method \'{sys.argv[2]}\' does not exist.\nType \'python search.py -h\' for a list of commands.\n")
             exit(0)
 
-    goal_reached, nodes_searched, result = method_obj.search()
+    # goal_reached, nodes_searched, result = method_obj.search()
+    method_obj.search()
     print(f"{args.filename} {args.method}")
-    print(f"{goal_reached} {nodes_searched}")
-    print(f"{result}")
+    print(f"{method_obj.result} {len(method_obj.explored)}")
+    print(f"{method_obj.final_path}")
 
 if __name__ == '__main__':
     main(sys.argv)

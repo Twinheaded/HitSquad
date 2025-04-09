@@ -31,9 +31,10 @@ class SearchMethod:
         print("STATE:", state)
         print("\nAvailable actions:")
         if actions:
-            # for x in sorted(actions, key=actions_sort_key):
             for a in actions:
-                print("->", a, "| cost:", self.problem.path_cost(state, a), "| h(x):", self.distance_heuristic(a))
+                c = self.problem.path_cost(state, a)
+                h = self.distance_heuristic(a)
+                print(f"-> {a} | cost: {c} | h(x): {h:.3f} | cost + h(x): {c + h:.3f}")
             print("")
         else:
             print("None\n")

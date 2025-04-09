@@ -1,4 +1,4 @@
-import re
+import regex as re
 
 from .node import Node
 from .problem import Problem

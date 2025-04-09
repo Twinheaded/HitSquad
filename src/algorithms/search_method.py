@@ -1,5 +1,3 @@
-# import math
-
 from ..problem import Problem
 from ..node import Node
 

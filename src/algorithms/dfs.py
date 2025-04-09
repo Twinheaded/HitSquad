@@ -19,10 +19,10 @@ class DFS(SearchMethod):
                 self.final_path = path
                 return
             ## A list of connected nodes (actions) sorted by the shortest distance to the nearest destination
-            actions = [node for node in reversed(get_actions(node).keys())]
+            actions = [node for node in reversed(sorted(get_actions(node).keys(), key=lambda x: x.node_id))]
             for a in actions:
                 if not a in self.explored:
                     self.frontier.append((a, path))
             ################
-            # self.print_state(node, get_actions(node)) # <-- For debugging only
+            self.print_state(node, get_actions(node)) # <-- For debugging only
             ################

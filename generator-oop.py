@@ -132,7 +132,7 @@ def draw_graph(problem, path=None, explored=None, algorithm="BFS"): # Draw graph
         screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
 
     if path:
-        path_text = f"Final path: [ {' ,'.join(map(str, path))}] (Edges: {len(path)-1})"
+        path_text = f"Final path: [{', '.join(map(str, path))}] (Edges: {len(path)-1})"
     else:
         path_text = "No path found"
     screen.blit(LARGE_FONT.render(path_text, True, BLACK), (10, H-40))

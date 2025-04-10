@@ -30,7 +30,7 @@ def main(argv):
 
     method_obj = None
 
-    match args.method:
+    match args.method.upper():
         case "DFS":
             method_obj = DFS(problem)
         case "BFS":

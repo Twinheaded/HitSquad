@@ -1,6 +1,7 @@
 import pygame
 import random
 import heapq
+import numpy as np
 from collections import deque, defaultdict
 
 from src.file_parser import FileParser
@@ -40,7 +41,7 @@ LARGE_FONT = pygame.font.SysFont('Arial', 24)
 
 class GraphGenerator:
     @staticmethod
-    def generate_random(num_nodes=10, edge_density=0.2):
+    def generate_random(num_nodes=10, edge_density=0.1, graph_range=(10,10)):
         nodes = []
         for node_id in range(1, num_nodes + 1):
             while True:
@@ -70,94 +71,112 @@ class GraphGenerator:
         problem = p.create_problem()
         return problem
         
-def draw_graph(problem, path=None, explored=None, algorithm="BFS"): # Draw graph on screen
-    nodes, initial, goals, edges = problem.nodes, problem.initial, problem.goal, problem.edges
-    screen.fill(WHITE)
-    
-    # Draws edges
-    for node in edges:
-        for action, cost in edges[node].items():
-            color = GRAY
-            edge_width_modifier = 0
-            if node in explored and action in explored and not action in path:
-                color = ORANGE
+    def draw_graph(problem, path=None, explored=None, algorithm="BFS"): # Draw graph on screen
+        nodes, initial, goals, edges = problem.nodes, problem.initial, problem.goal, problem.edges
+        screen.fill(WHITE)
+        x_range = (np.inf, -np.inf) # (lowest x-value, highest x-value)
+        y_range = (np.inf, -np.inf) # (lowest x-value, highest x-value)
+        
+        # Draws edges
+        for node in nodes:
+            nx, ny = node.coordinates
+            x_range = (min(x_range[0], nx), max(x_range[1], nx))
+            y_range = (min(y_range[0], ny), max(y_range[1], ny))
+
+        zoom_multiplier = (abs(W - MARGIN*2) / abs(x_range[1] - x_range[0]),
+                           abs(H - MARGIN*2) / abs(y_range[1] - y_range[0]))
+        zoom = lambda n: (
+                MARGIN + abs(n.coordinates[0] - x_range[0]) * zoom_multiplier[0],
+                MARGIN + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1]
+                )
+
+        for node in edges:
+            for action, cost in edges[node].items():
+                color = GRAY
                 edge_width_modifier = 0
-            if node in path and action in path and path.index(action)-path.index(node) == 1:
+                n_pos = zoom(node)
+                a_pos = zoom(action)
+                if node in explored and action in explored and not action in path:
+                    color = ORANGE
+                    edge_width_modifier = 0
+                if node in path and action in path and path.index(action)-path.index(node) == 1:
+                    color = GREEN
+                    edge_width_modifier = 2
+                pygame.draw.line(screen, color, n_pos, a_pos, EDGE_WIDTH + edge_width_modifier)
+                mid = ((n_pos[0]+a_pos[0])//2, (n_pos[1]+a_pos[1])//2)
+                screen.blit(FONT.render(str(cost), True, BLACK), (mid[0]-5, mid[1]-5))
+
+        # Draws explored nodes
+        for node in explored:
+            explored_color = ORANGE
+            if node in path:
+                explored_color = GREEN
+
+            pygame.draw.circle(screen, explored_color, zoom(node), NODE_RADIUS+2)
+
+        # Draws nodes
+        for node in nodes:
+            pos = zoom(node)
+            color = GRAY
+            if node == initial:
                 color = GREEN
-                edge_width_modifier = 2
-            pygame.draw.line(screen, color, node.coordinates, action.coordinates, EDGE_WIDTH + edge_width_modifier)
-            mid = ((node.coordinates[0]+action.coordinates[0])//2, (node.coordinates[1]+action.coordinates[1])//2)
-            screen.blit(FONT.render(str(cost), True, BLACK), (mid[0]-5, mid[1]-5))
-    
-    # Draws explored nodes
-    for node in explored:
-        explored_color = ORANGE
-        if node in path:
-            explored_color = GREEN
+                goal_text = FONT.render("ORIGIN", True, GREEN)
+                pos_below = (pos[0], pos[1] + 20)
+                screen.blit(goal_text, goal_text.get_rect(center = pos_below))
+            if node in goals:
+                color = BLACK
+                goal_text = FONT.render("GOAL", True, BLACK)
+                pos_below = (pos[0], pos[1] + 20)
+                screen.blit(goal_text, goal_text.get_rect(center = pos_below))
+            pygame.draw.circle(screen, color, pos, NODE_RADIUS)
+            id_text = FONT.render(str(node), True, WHITE)
+            screen.blit(id_text, id_text.get_rect(center = pos))
+        
+        # Draws info
+        algo_text = f"Algorithm: {algorithm}"
+        screen.blit(LARGE_FONT.render(algo_text, True, BLACK), (10, 10))
+        screen.blit(FONT.render("R: New Graph", True, BLACK), (10, 50))
+        algo_options = [DFS, BFS, GBFS, AS, IDDFS, BS]
+        for i in range(len(algo_options)):
+            algo_color = BLACK
+            if algo_options[i].name == algorithm:
+                algo_color = RED
 
-        pygame.draw.circle(screen, explored_color, node.coordinates, NODE_RADIUS+2)
-    
-    # Draws nodes
-    for node in nodes:
-        pos = node.coordinates
-        color = GRAY
-        if node == initial:
-            color = GREEN
-            goal_text = FONT.render("ORIGIN", True, GREEN)
-            pos_below = (pos[0], pos[1] + 20)
-            screen.blit(goal_text, goal_text.get_rect(center = pos_below))
-        if node in goals:
-            color = BLACK
-            goal_text = FONT.render("GOAL", True, BLACK)
-            pos_below = (pos[0], pos[1] + 20)
-            screen.blit(goal_text, goal_text.get_rect(center = pos_below))
-        pygame.draw.circle(screen, color, pos, NODE_RADIUS)
-        id_text = FONT.render(str(node), True, WHITE)
-        screen.blit(id_text, id_text.get_rect(center = pos))
-    
-    # Draws info
-    algo_text = f"Algorithm: {algorithm}"
-    screen.blit(LARGE_FONT.render(algo_text, True, BLACK), (10, 10))
-    screen.blit(FONT.render("R: New Graph", True, BLACK), (10, 50))
-    algo_options = [DFS, BFS, GBFS, AS, IDDFS, BS]
-    for i in range(len(algo_options)):
-        algo_color = BLACK
-        if algo_options[i].name == algorithm:
-            algo_color = RED
+            screen.blit(FONT.render(f"{i+1}: {algo_options[i].name}", True, algo_color), (10, 80 + i*20))
 
-        screen.blit(FONT.render(f"{i+1}: {algo_options[i].name}", True, algo_color), (10, 80 + i*20))
+        if explored:
+            path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {','.join(map(str, explored))}"
+            screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
 
-    if explored:
-        path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {','.join(map(str, explored))}"
-        screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
+        if path:
+            path_text = f"Final path: [{', '.join(map(str, path))}] (Edges: {len(path)-1})"
+        else:
+            path_text = "No path found"
+        screen.blit(LARGE_FONT.render(path_text, True, BLACK), (10, H-40))
 
-    if path:
-        path_text = f"Final path: [{', '.join(map(str, path))}] (Edges: {len(path)-1})"
-    else:
-        path_text = "No path found"
-    screen.blit(LARGE_FONT.render(path_text, True, BLACK), (10, H-40))
-
-def create_search_algorithm(key, problem):
-    method_obj = None
-    match key:
-        case BFS.name:
-            method_obj = BFS(problem)
-        case DFS.name:
-            method_obj = DFS(problem)
-        case GBFS.name:
-            method_obj = GBFS(problem)
-        case AS.name:
-            method_obj = AS(problem)
-        case IDDFS.name:
-            method_obj = IDDFS(problem)
-        case BS.name:
-            method_obj = BS(problem)
-        case _:
-            method_obj = None
-    return method_obj
+    def create_search_algorithm(key, problem):
+        method_obj = None
+        match key:
+            case BFS.name:
+                method_obj = BFS(problem)
+            case DFS.name:
+                method_obj = DFS(problem)
+            case GBFS.name:
+                method_obj = GBFS(problem)
+            case AS.name:
+                method_obj = AS(problem)
+            case IDDFS.name:
+                method_obj = IDDFS(problem)
+            case BS.name:
+                method_obj = BS(problem)
+            case _:
+                method_obj = None
+        return method_obj
 
 def main():
     problem = GraphGenerator.generate_random()
+    # problem = GraphGenerator.load_from_file("simple-test.txt")
+
 
     algorithms = {
         "1": DFS.name,

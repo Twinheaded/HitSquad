@@ -42,11 +42,15 @@ LARGE_FONT = pygame.font.SysFont('Arial', 24)
 class GraphGenerator:
     @staticmethod
     def generate_random(num_nodes=10, edge_density=0.1, graph_range=(10,10)):
+        # graph_range = (maximum x value, maximum y value)
+
         nodes = []
         for node_id in range(1, num_nodes + 1):
             while True:
-                x = random.randint(MARGIN, W-MARGIN)
-                y = random.randint(MARGIN, H-MARGIN)
+                x = random.randint(0, graph_range[0])
+                y = random.randint(0, graph_range[1]) 
+
+                ## TODO: Replace the '50' in here with a calculated value
                 if all(((x-px)**2 + (y-py)**2)**0.5 > 50 for px, py in [n.coordinates for n in nodes]):
                     nodes.append(Node(node_id, (x,y)))
                     break
@@ -87,7 +91,7 @@ class GraphGenerator:
                            abs(H - MARGIN*2) / abs(y_range[1] - y_range[0]))
         zoom = lambda n: (
                 MARGIN + abs(n.coordinates[0] - x_range[0]) * zoom_multiplier[0],
-                MARGIN + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1]
+                H - (MARGIN + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1])
                 )
 
         for node in edges:
@@ -154,28 +158,27 @@ class GraphGenerator:
             path_text = "No path found"
         screen.blit(LARGE_FONT.render(path_text, True, BLACK), (10, H-40))
 
-    def create_search_algorithm(key, problem):
-        method_obj = None
-        match key:
-            case BFS.name:
-                method_obj = BFS(problem)
-            case DFS.name:
-                method_obj = DFS(problem)
-            case GBFS.name:
-                method_obj = GBFS(problem)
-            case AS.name:
-                method_obj = AS(problem)
-            case IDDFS.name:
-                method_obj = IDDFS(problem)
-            case BS.name:
-                method_obj = BS(problem)
-            case _:
-                method_obj = None
-        return method_obj
+def create_search_algorithm(key, problem):
+    method_obj = None
+    match key:
+        case BFS.name:
+            method_obj = BFS(problem)
+        case DFS.name:
+            method_obj = DFS(problem)
+        case GBFS.name:
+            method_obj = GBFS(problem)
+        case AS.name:
+            method_obj = AS(problem)
+        case IDDFS.name:
+            method_obj = IDDFS(problem)
+        case BS.name:
+            method_obj = BS(problem)
+        case _:
+            method_obj = None
+    return method_obj
 
 def main():
-    problem = GraphGenerator.generate_random()
-    # problem = GraphGenerator.load_from_file("simple-test.txt")
+    problem = GraphGenerator.load_from_file("PathFinder-test.txt")
 
 
     algorithms = {
@@ -210,7 +213,7 @@ def main():
                     algo_obj = create_search_algorithm(current_algo, problem)
                     algo_obj.search()
 
-        draw_graph(problem, algo_obj.final_path, algo_obj.explored, algo_obj.name) # Draws graph
+        GraphGenerator.draw_graph(problem, algo_obj.final_path, algo_obj.explored, algo_obj.name) # Draws graph
         pygame.display.flip() # Updates screen
     
     pygame.quit()

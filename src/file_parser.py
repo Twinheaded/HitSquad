@@ -22,17 +22,18 @@ class FileParser:
         node_str = f.readline().strip()        # Line under the 'Nodes:' heading
         while node_str != "Edges:":
             assert re.match(r'^\d+: \(\d+,\d+\)$', node_str), wrong_format_error # RegEx for '#: (#,#)'
-            node_id = int(node_str[0])
-            x = int(node_str[4])
-            y = int(node_str[6])
+            node_id, x, y = [int(x) for x in re.split(r'\D+', node_str[:-1])]
             self.nodes_by_id[node_id] = Node(node_id,(x,y))
             node_str = f.readline().strip()
         edge_str = f.readline().strip()        # Line under the 'Edges:' heading
         while edge_str:                        # Continue until an empty line
+            # state      - the 'from' address (Int)
+            # transition - the 'to' address (Node)
+            # cost       - the expense of traversing (Int)
             assert re.match(r'^\(\d+,\d+\): \d+$', edge_str)  # RegEx for the text format, '(#,#): #'
-            s = self.nodes_by_id[int(edge_str[1])]        # state      - the 'from' address (Int)
-            t = self.nodes_by_id[int(edge_str[3])]        # transition - the 'to' address (Node)
-            c = int(edge_str[7])        # cost       - the expense of traversing (Int)
+            s, t, c = [int(x) for x in re.split(r'\D+', edge_str[1:])]
+            s = self.nodes_by_id[s]
+            t = self.nodes_by_id[t]
             # Connect s -> t by an edge with a cost of c
             if s in self.edges:
                 self.edges[s].update({t:c})

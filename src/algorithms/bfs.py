@@ -14,12 +14,10 @@ class BFS(SearchMethod):
                 return self.result
 
             neighbors = [node for node in sorted(self.problem.get_actions(current_node).keys(), key=lambda x: x.node_id)]
-            
             for neighbor in neighbors:
                 if neighbor not in self.explored and all(n[0] != neighbor for n in self.frontier):
                     self.frontier.append((neighbor, path + [current_node]))
 
-          
             ################
             # self.print_state(current_node, self.problem.get_actions(current_node)) # <-- For debugging only
             ################

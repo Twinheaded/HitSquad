@@ -8,14 +8,8 @@ class BFS(SearchMethod):
     name = "BFS"
 
     def search(self):
-        frontier = deque()
-        frontier.append((self.problem.initial, []))  # (current_node, path)
-        self.explored = []
-        self.result = None
-        self.final_path = []
-
-        while frontier:
-            current_node, path = frontier.popleft()
+        while self.frontier:
+            current_node, path = self.frontier.pop(0)
             self.explored.append(current_node)
 
             if self.problem.goal_test(current_node):
@@ -26,10 +20,10 @@ class BFS(SearchMethod):
             neighbors = self.problem.get_actions(current_node)
             
             for neighbor in neighbors:
-                if neighbor not in self.explored and all(n[0] != neighbor for n in frontier):
-                    frontier.append((neighbor, path + [current_node]))
+                if neighbor not in self.explored and all(n[0] != neighbor for n in self.frontier):
+                    self.frontier.append((neighbor, path + [current_node]))
 
           
-        ################
-        # self.print_state(node, get_actions(node)) # <-- For debugging only
-        ################
+            ################
+            self.print_state(current_node, self.problem.get_actions(current_node)) # <-- For debugging only
+            ################

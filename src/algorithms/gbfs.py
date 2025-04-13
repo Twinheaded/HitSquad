@@ -1,7 +1,5 @@
 from .search_method import SearchMethod
 
-# Philip / Jack
-# ============================================================
 class GBFS(SearchMethod):
     name = "GBFS"
 

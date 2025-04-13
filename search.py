@@ -1,4 +1,3 @@
-# import os
 import sys
 import argparse
 from src.file_parser import FileParser

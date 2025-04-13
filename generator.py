@@ -1,4 +1,5 @@
 import sys
+import argparse
 import pygame
 import random
 import heapq
@@ -80,7 +81,7 @@ class GraphGenerator:
         problem = p.create_problem()
         return problem
         
-    def draw_graph(problem, path=None, explored=None, algorithm=DFS.name): # Draw graph on screen
+    def draw_graph(problem, path=None, explored=None, method=DFS.name): # Draw graph on screen
         nodes, initial, goals, edges = problem.nodes, problem.initial, problem.goal, problem.edges
         screen.fill(WHITE)
         x_range = (np.inf, -np.inf) # (lowest x-value on the graph, highest x-value on the graph)
@@ -161,11 +162,11 @@ class GraphGenerator:
                 mid = edge_midpoint(zoom(node), zoom(action))
                 if solution_edge(node, action) or hovering_over_node(node):
                     h = problem.distance_heuristic(action)
-                    if algorithm == GBFS.name:
-                        GBFS_text = FONT.render(f"h(x): {h:.2f}", True, BLACK)
-                        text_centered = GBFS_text.get_rect(center = mid)
-                        screen.blit(GBFS_text, (text_centered[0], text_centered[1]-15))
-                    if algorithm == AS.name:
+                    if method == GBFS.name or method == BS.name:
+                        heuristic_text = FONT.render(f"h(x): {h:.2f}", True, BLACK)
+                        text_centered = heuristic_text.get_rect(center = mid)
+                        screen.blit(heuristic_text, (text_centered[0], text_centered[1]-15))
+                    if method == AS.name:
                         AS_text = FONT.render(f"c+h(x): {cost + h:.2f}", True, BLACK)
                         text_centered = AS_text.get_rect(center = mid)
                         screen.blit(AS_text, (text_centered[0], text_centered[1]-15))
@@ -194,14 +195,14 @@ class GraphGenerator:
                 screen.blit(coords_text, coords_text.get_rect(center = coords_text_pos))
         
         # Draw text in side panel
-        algo_text = f"Algorithm: {algorithm}"
-        screen.blit(LARGE_FONT.render(algo_text, True, BLACK), (10, 10))
-        algo_options = [DFS, BFS, GBFS, AS, IDDFS, BS]
-        for i in range(len(algo_options)):
-            algo_color = BLACK
-            if algo_options[i].name == algorithm:
-                algo_color = RED
-            screen.blit(FONT.render(f"{i+1}: {algo_options[i].name}", True, algo_color), (10, 50 + i*20))
+        method_text = f"Method: {method}"
+        screen.blit(LARGE_FONT.render(method_text, True, BLACK), (10, 10))
+        method_options = [DFS, BFS, GBFS, AS, IDDFS, BS]
+        for i in range(len(method_options)):
+            method_color = BLACK
+            if method_options[i].name == method:
+                method_color = RED
+            screen.blit(FONT.render(f"{i+1}: {method_options[i].name}", True, method_color), (10, 50 + i*20))
         if explored:
             path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {' → '.join(map(str, explored))}"
             screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
@@ -226,7 +227,7 @@ class GraphGenerator:
         screen.blit(FONT.render("◄: Lower % of edges", True, BLACK), (10, new_graph_text + 110))
 
 
-def create_search_algorithm(key, problem):
+def create_search_method(key, problem):
     method_obj = None
     match key:
         case BFS.name:
@@ -235,26 +236,45 @@ def create_search_algorithm(key, problem):
             method_obj = DFS(problem)
         case GBFS.name:
             method_obj = GBFS(problem)
-        case AS.name:
+        case AS.name | "A*":
             method_obj = AS(problem)
-        case IDDFS.name:
+        case IDDFS.name | "CUS1":
             method_obj = IDDFS(problem)
-        case BS.name:
+        case BS.name | "CUS2":
             method_obj = BS(problem)
         case _:
+            print(f"\nSearch method \'{key}\' does not exist.\nType \'python generator.py -h\' for a list of commands.\n")
             method_obj = None
     return method_obj
 
-def main():
+def parse_from_args(argv):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "filename",
+        nargs="?",
+        default="PathFinder-test.txt",
+        help="Specify file location")
+    parser.add_argument(
+        "method",
+        nargs="?",
+        default="DFS",
+        help="Specify searching algorithm."
+    )
+    args = parser.parse_args()
+
+    p = FileParser()
+    p.parse(args.filename)
+    problem = p.create_problem()
+    method_obj = create_search_method(args.method, problem)
+    return problem, method_obj
+
+def main(argv):
     num_of_nodes = 10
     num_of_edges = 20
 
-    if len(sys.argv) == 2:
-        problem = GraphGenerator.load_from_file(sys.argv[1])
-    else:
-        problem = GraphGenerator.generate_random(num_of_nodes, num_of_edges)
+    problem, method_obj = parse_from_args(argv)
 
-    algorithms = {
+    methods = {
         "1": DFS.name,
         "2": BFS.name,
         "3": GBFS.name,
@@ -263,45 +283,46 @@ def main():
         "6": BS.name,
     }
 
-    current_algo = algorithms["1"]
+    if method_obj:
+        current_method = methods[next(key for key in methods if methods[key] == method_obj.name)]
+        print(current_method)
 
-    algo_obj = create_search_algorithm(current_algo, problem)
-    algo_obj.search()
+        method_obj.search()
 
-    new_graph_inputs = [pygame.K_n, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]
+        new_graph_inputs = [pygame.K_n, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]
 
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    return
-                if event.key in new_graph_inputs:  # New graph
-                    match event.key:
-                        case pygame.K_UP:
-                            num_of_nodes += 1
-                        case pygame.K_DOWN:
-                            num_of_nodes = max(num_of_nodes - 1, 3)
-                            num_of_edges = min(num_of_edges, (num_of_nodes - 1) * num_of_nodes)
-                        case pygame.K_LEFT:
-                            num_of_edges = max(num_of_edges - 1, 0)
-                        case pygame.K_RIGHT:
-                            num_of_edges = min(num_of_edges + 1, (num_of_nodes - 1) * num_of_nodes)
-                    problem = GraphGenerator.generate_random(num_of_nodes, num_of_edges)
-                    algo_obj = create_search_algorithm(current_algo, problem)
-                    algo_obj.search()
-                elif event.unicode in algorithms:
-                    current_algo = algorithms[event.unicode]
-                    algo_obj = create_search_algorithm(current_algo, problem)
-                    algo_obj.search()
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        return
+                    if event.key in new_graph_inputs:  # New graph
+                        match event.key:
+                            case pygame.K_UP:
+                                num_of_nodes += 1
+                            case pygame.K_DOWN:
+                                num_of_nodes = max(num_of_nodes - 1, 3)
+                                num_of_edges = min(num_of_edges, (num_of_nodes - 1) * num_of_nodes)
+                            case pygame.K_LEFT:
+                                num_of_edges = max(num_of_edges - 1, 0)
+                            case pygame.K_RIGHT:
+                                num_of_edges = min(num_of_edges + 1, (num_of_nodes - 1) * num_of_nodes)
+                        problem = GraphGenerator.generate_random(num_of_nodes, num_of_edges)
+                        method_obj = create_search_method(current_method, problem)
+                        method_obj.search()
+                    elif event.unicode in methods:
+                        current_method = methods[event.unicode]
+                        method_obj = create_search_method(current_method, problem)
+                        method_obj.search()
 
-        GraphGenerator.draw_graph(problem, algo_obj.final_path, algo_obj.explored, algo_obj.name) # Draws graph
-        pygame.display.flip() # Updates screen
-    
-    pygame.quit()
+            GraphGenerator.draw_graph(problem, method_obj.final_path, method_obj.explored, method_obj.name) # Draws graph
+            pygame.display.flip() # Updates screen
+        
+        pygame.quit()
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)

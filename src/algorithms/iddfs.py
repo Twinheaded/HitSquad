@@ -10,8 +10,6 @@ class IDDFS(SearchMethod):
     def search(self):
         depth = 0
         while True:
-            print("DEPTH:", depth)
-            print(self.explored)
             if self.depth_limited_dfs(depth):
                 return
             depth += 1

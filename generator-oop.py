@@ -35,24 +35,22 @@ ORANGE = (255, 165, 0)
 # Settings
 NODE_RADIUS = 10
 EDGE_WIDTH = 2
-MARGIN = 100
+MARGIN = 150
 FONT = pygame.font.SysFont('Arial', 16)
 LARGE_FONT = pygame.font.SysFont('Arial', 24)
 
 class GraphGenerator:
     @staticmethod
     def generate_random(num_nodes=10, edge_density=0.1, graph_range=(10,10)):
-        # graph_range = (maximum x value, maximum y value)
+        # graph_range - the distance from (0,0) that the nodes will be generated to.
+        #   format: (x: 0 to [int], y: 0 to [int])
 
         nodes = []
         for node_id in range(1, num_nodes + 1):
             while True:
-                x = random.randint(MARGIN, W-MARGIN)
-                y = random.randint(MARGIN, H-MARGIN)
-                # x = random.randint(0, graph_range[0])
-                # y = random.randint(0, graph_range[1]) 
-                ## TODO: Replace the '50' in here with a calculated value
-                if all(((x-px)**2 + (y-py)**2)**0.5 > 50 for px, py in [n.coordinates for n in nodes]):
+                x = random.randint(0, graph_range[0])
+                y = random.randint(0, graph_range[1]) 
+                if not (x, y) in [n.coordinates for n in nodes]:
                     nodes.append(Node(node_id, (x,y)))
                     break
         edges = {}
@@ -94,7 +92,7 @@ class GraphGenerator:
                 MARGIN + abs(n.coordinates[0] - x_range[0]) * zoom_multiplier[0],
                 H - (MARGIN + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1])
                 )
-
+        
         for node in edges:
             for action, cost in edges[node].items():
                 color = GRAY

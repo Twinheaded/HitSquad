@@ -1,8 +1,4 @@
 from .search_method import SearchMethod
-from multiprocessing import Queue
-
-from .search_method import SearchMethod
-from collections import deque
 
 class BFS(SearchMethod):
     name = "BFS"

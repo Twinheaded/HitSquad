@@ -47,9 +47,10 @@ class GraphGenerator:
         nodes = []
         for node_id in range(1, num_nodes + 1):
             while True:
-                x = random.randint(0, graph_range[0])
-                y = random.randint(0, graph_range[1]) 
-
+                x = random.randint(MARGIN, W-MARGIN)
+                y = random.randint(MARGIN, H-MARGIN)
+                # x = random.randint(0, graph_range[0])
+                # y = random.randint(0, graph_range[1]) 
                 ## TODO: Replace the '50' in here with a calculated value
                 if all(((x-px)**2 + (y-py)**2)**0.5 > 50 for px, py in [n.coordinates for n in nodes]):
                     nodes.append(Node(node_id, (x,y)))

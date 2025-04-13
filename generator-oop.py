@@ -120,20 +120,25 @@ class GraphGenerator:
         # Draws nodes
         for node in nodes:
             pos = zoom(node)
+            pos_below = (pos[0], pos[1] + 20)
             color = GRAY
             if node == initial:
                 color = GREEN
                 goal_text = FONT.render("ORIGIN", True, GREEN)
-                pos_below = (pos[0], pos[1] + 20)
                 screen.blit(goal_text, goal_text.get_rect(center = pos_below))
             if node in goals:
                 color = BLACK
                 goal_text = FONT.render("GOAL", True, BLACK)
-                pos_below = (pos[0], pos[1] + 20)
                 screen.blit(goal_text, goal_text.get_rect(center = pos_below))
-            pygame.draw.circle(screen, color, pos, NODE_RADIUS)
+            node_bounds = pygame.draw.circle(screen, color, pos, NODE_RADIUS)
             id_text = FONT.render(str(node), True, WHITE)
             screen.blit(id_text, id_text.get_rect(center = pos))
+
+            if node_bounds.collidepoint(pygame.mouse.get_pos()):
+                coords_text_pos = (pos[0], pos[1] - 25)
+                coords_text = FONT.render(str(node.coordinates), True, BLACK)
+                screen.blit(coords_text, coords_text.get_rect(center = coords_text_pos))
+
         
         # Draws info
         algo_text = f"Algorithm: {algorithm}"

@@ -14,7 +14,7 @@ class DFS(SearchMethod):
             self.explored.append(node)
             if goal_test(node):
                 self.result = node
-                w
+                self.final_path = path
                 return
             ## A list of connected nodes (actions) sorted by the shortest distance to the nearest destination
             actions = [node for node in reversed(sorted(get_actions(node).keys(), key=lambda x: x.node_id))]

@@ -1,3 +1,4 @@
+import sys
 import pygame
 import random
 import heapq
@@ -74,41 +75,36 @@ class GraphGenerator:
         problem = p.create_problem()
         return problem
         
-    def draw_graph(problem, path=None, explored=None, algorithm="BFS"): # Draw graph on screen
+    def draw_graph(problem, path=None, explored=None, algorithm=DFS.name): # Draw graph on screen
         nodes, initial, goals, edges = problem.nodes, problem.initial, problem.goal, problem.edges
         screen.fill(WHITE)
-        x_range = (np.inf, -np.inf) # (lowest x-value, highest x-value)
-        y_range = (np.inf, -np.inf) # (lowest x-value, highest x-value)
+        x_range = (np.inf, -np.inf) # (lowest x-value on the graph, highest x-value on the graph)
+        y_range = (np.inf, -np.inf) # (lowest y-value on the graph, highest y-value on the graph)
         
-        # Draws edges
+        # Calculate x and y ranges
         for node in nodes:
             nx, ny = node.coordinates
             x_range = (min(x_range[0], nx), max(x_range[1], nx))
             y_range = (min(y_range[0], ny), max(y_range[1], ny))
 
+        # Return the ratio of display size to graph size: (x-multiplier, y-multiplier)
         zoom_multiplier = (abs(W - MARGIN*2) / abs(x_range[1] - x_range[0]),
                            abs(H - MARGIN*2) / abs(y_range[1] - y_range[0]))
+
+        # Return the pixel coordinates of the node after fitting to screen
         zoom = lambda n: (
                 MARGIN + abs(n.coordinates[0] - x_range[0]) * zoom_multiplier[0],
                 H - (MARGIN + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1])
-                )
-        
-        for node in edges:
-            for action, cost in edges[node].items():
-                color = GRAY
-                edge_width_modifier = 0
-                n_pos = zoom(node)
-                a_pos = zoom(action)
-                if node in explored and action in explored and not action in path:
-                    color = ORANGE
-                    edge_width_modifier = 0
-                if node in path and action in path and path.index(action)-path.index(node) == 1:
-                    color = GREEN
-                    edge_width_modifier = 2
-                pygame.draw.line(screen, color, n_pos, a_pos, EDGE_WIDTH + edge_width_modifier)
-                mid = ((n_pos[0]+a_pos[0])//2, (n_pos[1]+a_pos[1])//2)
-                screen.blit(FONT.render(str(cost), True, BLACK), (mid[0]-5, mid[1]-5))
+            )
 
+        # Returns True or False if the mouse is over the current node
+        hovering_over_node = lambda n: (
+                    pygame.Rect((zoom(n)[0] - NODE_RADIUS, zoom(n)[1] - NODE_RADIUS), (NODE_RADIUS*2, NODE_RADIUS*2)).collidepoint(pygame.mouse.get_pos())
+                )
+
+        # For text just underneath the node
+        pos_under = lambda pos: (pos[0], pos[1] + 20)
+        
         # Draws explored nodes
         for node in explored:
             explored_color = ORANGE
@@ -117,30 +113,60 @@ class GraphGenerator:
 
             pygame.draw.circle(screen, explored_color, zoom(node), NODE_RADIUS+2)
 
-        # Draws nodes
+        # Returns True or False if the search has reached a dead end on this edge
+        dead_end = lambda node, action: node in explored and action in explored and not action in path
+
+        # Returns True or False if the edge belongs to the solution
+        solution_edge = lambda node, action: node in path and action in path and path.index(action)-path.index(node) == 1
+
+        # Returns (x,y) for the midpoint between a node and an action node
+        edge_midpoint = lambda n_pos, a_pos: ((n_pos[0]+a_pos[0])//2, (n_pos[1]+a_pos[1])//2)
+
+        # Draw the edges connecting the nodes
+        for node in edges:
+            for action, cost in edges[node].items():
+                color = GRAY
+                edge_width_modifier = 0
+                n_pos = zoom(node)
+                a_pos = zoom(action)
+                edge_in_path = False
+                if dead_end(node, action):
+                    color = ORANGE
+                    edge_width_modifier = 0
+                if solution_edge(node, action):
+                    edge_in_path = True
+                    color = GREEN
+                    edge_width_modifier = 2
+                pygame.draw.line(screen, color, n_pos, a_pos, EDGE_WIDTH + edge_width_modifier)
+
+        for node in edges:
+            for action, cost in edges[node].items():
+                mid = edge_midpoint(zoom(node), zoom(action))
+                if solution_edge(node, action) or hovering_over_node(node):
+                    screen.blit(FONT.render(str(cost), True, BLACK), (mid[0]-5, mid[1]-5))
+
+        # Draw the nodes
         for node in nodes:
             pos = zoom(node)
-            pos_below = (pos[0], pos[1] + 20)
             color = GRAY
             if node == initial:
                 color = GREEN
                 goal_text = FONT.render("ORIGIN", True, GREEN)
-                screen.blit(goal_text, goal_text.get_rect(center = pos_below))
+                screen.blit(goal_text, goal_text.get_rect(center = pos_under(pos)))
             if node in goals:
                 color = BLACK
                 goal_text = FONT.render("GOAL", True, BLACK)
-                screen.blit(goal_text, goal_text.get_rect(center = pos_below))
-            node_bounds = pygame.draw.circle(screen, color, pos, NODE_RADIUS)
+                screen.blit(goal_text, goal_text.get_rect(center = pos_under(pos)))
+            pygame.draw.circle(screen, color, pos, NODE_RADIUS)
             id_text = FONT.render(str(node), True, WHITE)
             screen.blit(id_text, id_text.get_rect(center = pos))
 
-            if node_bounds.collidepoint(pygame.mouse.get_pos()):
+            if hovering_over_node(node):
                 coords_text_pos = (pos[0], pos[1] - 25)
                 coords_text = FONT.render(str(node.coordinates), True, BLACK)
                 screen.blit(coords_text, coords_text.get_rect(center = coords_text_pos))
-
         
-        # Draws info
+        # Draw text info
         algo_text = f"Algorithm: {algorithm}"
         screen.blit(LARGE_FONT.render(algo_text, True, BLACK), (10, 10))
         screen.blit(FONT.render("R: New Graph", True, BLACK), (10, 50))
@@ -149,13 +175,10 @@ class GraphGenerator:
             algo_color = BLACK
             if algo_options[i].name == algorithm:
                 algo_color = RED
-
             screen.blit(FONT.render(f"{i+1}: {algo_options[i].name}", True, algo_color), (10, 80 + i*20))
-
         if explored:
             path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {','.join(map(str, explored))}"
             screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
-
         if path:
             path_text = f"Final path: [{', '.join(map(str, path))}] (Edges: {len(path)-1})"
         else:
@@ -182,7 +205,10 @@ def create_search_algorithm(key, problem):
     return method_obj
 
 def main():
-    problem = GraphGenerator.load_from_file("PathFinder-test.txt")
+    if len(sys.argv) == 2:
+        problem = GraphGenerator.load_from_file(sys.argv[1])
+    else:
+        problem = GraphGenerator.generate_random()
 
 
     algorithms = {

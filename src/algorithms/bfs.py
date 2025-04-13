@@ -13,7 +13,7 @@ class BFS(SearchMethod):
                 self.result = current_node
                 return self.result
 
-            neighbors = self.problem.get_actions(current_node)
+            neighbors = [node for node in sorted(self.problem.get_actions(current_node).keys(), key=lambda x: x.node_id)]
             
             for neighbor in neighbors:
                 if neighbor not in self.explored and all(n[0] != neighbor for n in self.frontier):

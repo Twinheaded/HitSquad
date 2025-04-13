@@ -1,7 +1,6 @@
 from ..problem import Problem
 from ..node import Node
 
-
 class SearchMethod:
     def __init__(self, problem):
         self.problem = problem
@@ -12,19 +11,6 @@ class SearchMethod:
 
     def search(self):
         raise NotImplementedError
-
-    # def distance_heuristic(self, node):
-    #     ###Computes the minimum Euclidean distance from node to any goal.###
-    #     if node in self.problem.goal:
-    #         return 0
-    #     min_dist = float('inf')
-    #     for goal in self.problem.goal:
-    #         dx = node.coordinates[0] - goal.coordinates[0]
-    #         dy = node.coordinates[1] - goal.coordinates[1]
-    #         dist = (dx**2 + dy**2)**0.5  # Euclidean distance
-    #         if dist < min_dist:
-    #             min_dist = dist
-    #     return min_dist
     
     def print_state(self, state, actions, actions_sort_key=None):
         print("=================")
@@ -41,6 +27,7 @@ class SearchMethod:
         print("FRONTIER:", self.frontier)
         print("EXPLORED:", self.explored)
         print("GOAL:", " or ".join(map(str, self.problem.goal)))
+
         print("=================")
         print("        |")
         print("        v")

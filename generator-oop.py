@@ -139,11 +139,22 @@ class GraphGenerator:
                     edge_width_modifier = 2
                 pygame.draw.line(screen, color, n_pos, a_pos, EDGE_WIDTH + edge_width_modifier)
 
+        # Draw the cost and h(x) information for edges
         for node in edges:
             for action, cost in edges[node].items():
                 mid = edge_midpoint(zoom(node), zoom(action))
                 if solution_edge(node, action) or hovering_over_node(node):
-                    screen.blit(FONT.render(str(cost), True, BLACK), (mid[0]-5, mid[1]-5))
+                    h = problem.distance_heuristic(node)
+                    if algorithm == GBFS.name:
+                        GBFS_text = FONT.render(f"h(x): {h:.2f}", True, BLACK)
+                        text_centered = GBFS_text.get_rect(center = mid)
+                        screen.blit(GBFS_text, (text_centered[0], text_centered[1]-15))
+                    if algorithm == AS.name:
+                        AS_text = FONT.render(f"c+h(x): {cost + h:.2f}", True, BLACK)
+                        text_centered = AS_text.get_rect(center = mid)
+                        screen.blit(AS_text, (text_centered[0], text_centered[1]-15))
+                    cost_text = FONT.render(f"{cost}", True, BLACK)
+                    screen.blit(cost_text, cost_text.get_rect(center = mid))
 
         # Draw the nodes
         for node in nodes:

@@ -4,7 +4,6 @@ import pygame
 import random
 import heapq
 import numpy as np
-from collections import deque, defaultdict
 
 from src.file_parser import FileParser
 from src.algorithms.dfs import DFS
@@ -262,9 +261,7 @@ def parse_from_args(argv):
     )
     args = parser.parse_args()
 
-    p = FileParser()
-    p.parse(args.filename)
-    problem = p.create_problem()
+    problem = GraphGenerator.load_from_file(args.filename)
     method_obj = create_search_method(args.method, problem)
     return problem, method_obj
 
@@ -285,10 +282,8 @@ def main(argv):
 
     if method_obj:
         current_method = methods[next(key for key in methods if methods[key] == method_obj.name)]
-        print(current_method)
-
         method_obj.search()
-
+        
         new_graph_inputs = [pygame.K_n, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]
 
         running = True

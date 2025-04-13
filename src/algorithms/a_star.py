@@ -7,7 +7,7 @@ class AS(SearchMethod):
         h = self.problem.distance_heuristic
 
         while self.frontier:
-            node, path = self.frontier.pop()          # state - the current node
+            node, path = self.frontier.pop() # state - the current node
             path = path + [node]
             self.explored.append(node)
 
@@ -24,5 +24,5 @@ class AS(SearchMethod):
                     self.frontier.append((a, path))
 
             ################
-            self.print_state(node, actions) # <-- For debugging only
+            # self.print_state(node, actions) # <-- For debugging only
             ################

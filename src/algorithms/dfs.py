@@ -1,7 +1,5 @@
 from .search_method import SearchMethod
 
-# Jack
-# ============================================================
 class DFS(SearchMethod):
     name = "DFS"
 

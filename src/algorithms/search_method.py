@@ -13,18 +13,18 @@ class SearchMethod:
     def search(self):
         raise NotImplementedError
 
-    def distance_heuristic(self, node):
-        ###Computes the minimum Euclidean distance from node to any goal.###
-        if node in self.problem.goal:
-            return 0
-        min_dist = float('inf')
-        for goal in self.problem.goal:
-            dx = node.coordinates[0] - goal.coordinates[0]
-            dy = node.coordinates[1] - goal.coordinates[1]
-            dist = (dx**2 + dy**2)**0.5  # Euclidean distance
-            if dist < min_dist:
-                min_dist = dist
-        return min_dist
+    # def distance_heuristic(self, node):
+    #     ###Computes the minimum Euclidean distance from node to any goal.###
+    #     if node in self.problem.goal:
+    #         return 0
+    #     min_dist = float('inf')
+    #     for goal in self.problem.goal:
+    #         dx = node.coordinates[0] - goal.coordinates[0]
+    #         dy = node.coordinates[1] - goal.coordinates[1]
+    #         dist = (dx**2 + dy**2)**0.5  # Euclidean distance
+    #         if dist < min_dist:
+    #             min_dist = dist
+    #     return min_dist
     
     def print_state(self, state, actions, actions_sort_key=None):
         print("=================")
@@ -33,7 +33,7 @@ class SearchMethod:
         if actions:
             for a in actions:
                 c = self.problem.path_cost(state, a)
-                h = self.distance_heuristic(a)
+                h = self.problem.distance_heuristic(a)
                 print(f"-> {a} | cost: {c} | h(x): {h:.3f} | cost + h(x): {c + h:.3f}")
             print("")
         else:

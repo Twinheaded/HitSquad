@@ -22,5 +22,5 @@ class AS(SearchMethod):
                 if not a in self.explored:
                     self.frontier.append((a, path))
             ################
-            # self.print_state(node, actions) # <-- For debugging only
+            self.print_state(node, actions) # <-- For debugging only
             ################

@@ -21,5 +21,5 @@ class BFS(SearchMethod):
 
           
             ################
-            self.print_state(current_node, self.problem.get_actions(current_node)) # <-- For debugging only
+            # self.print_state(current_node, self.problem.get_actions(current_node)) # <-- For debugging only
             ################

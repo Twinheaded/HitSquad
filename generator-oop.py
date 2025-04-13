@@ -36,35 +36,40 @@ ORANGE = (255, 165, 0)
 # Settings
 NODE_RADIUS = 10
 EDGE_WIDTH = 2
-MARGIN = 150
+X_MARGIN = 200
+Y_MARGIN = 100
 FONT = pygame.font.SysFont('Arial', 16)
 LARGE_FONT = pygame.font.SysFont('Arial', 24)
 
 class GraphGenerator:
     @staticmethod
-    def generate_random(num_nodes=10, edge_density=0.1, graph_range=(10,10)):
+    def generate_random(num_of_nodes=6, num_of_edges=4, graph_range=(10,10)):
+        assert num_of_edges <= (num_of_nodes - 1) * num_of_nodes
         # graph_range - the distance from (0,0) that the nodes will be generated to.
         #   format: (x: 0 to [int], y: 0 to [int])
 
         nodes = []
-        for node_id in range(1, num_nodes + 1):
+        for node_id in range(1, num_of_nodes + 1):
             while True:
                 x = random.randint(0, graph_range[0])
                 y = random.randint(0, graph_range[1]) 
+                closest_node_distance = min([((x-n.coordinates[0])**2 + (y-n.coordinates[1])**2)**0.5 for n in nodes], default=np.inf)
+
                 if not (x, y) in [n.coordinates for n in nodes]:
                     nodes.append(Node(node_id, (x,y)))
                     break
         edges = {}
         possible_actions = [(n1, n2) for n1 in nodes for n2 in nodes if n1 != n2]
         random.shuffle(possible_actions)
-        for n1,n2 in possible_actions[:int(edge_density*len(possible_actions))]:
+        # for n1,n2 in possible_actions[:int(edge_density*len(possible_actions))]:
+        for n1,n2 in possible_actions[:num_of_edges]:
             cost = random.randint(1, 10)
             if n1 in edges.keys():
                 edges[n1].update({n2:cost})
             else:
                 edges[n1] = {n2:cost}
         initial = random.choice(list(nodes))
-        goal = random.sample([n for n in nodes if n != initial], min(3, num_nodes-1))
+        goal = random.sample([n for n in nodes if n != initial], min(3, num_of_nodes-1))
         problem = Problem(nodes, initial, goal, edges)
         return problem
 
@@ -88,13 +93,15 @@ class GraphGenerator:
             y_range = (min(y_range[0], ny), max(y_range[1], ny))
 
         # Return the ratio of display size to graph size: (x-multiplier, y-multiplier)
-        zoom_multiplier = (abs(W - MARGIN*2) / abs(x_range[1] - x_range[0]),
-                           abs(H - MARGIN*2) / abs(y_range[1] - y_range[0]))
+        zoom_multiplier = (abs(W - X_MARGIN*2) / abs(x_range[1] - x_range[0]),
+                           abs(H - Y_MARGIN*2) / abs(y_range[1] - y_range[0]))
 
         # Return the pixel coordinates of the node after fitting to screen
+        X_OFFSET = 50
+        Y_OFFSET = 20
         zoom = lambda n: (
-                MARGIN + abs(n.coordinates[0] - x_range[0]) * zoom_multiplier[0],
-                H - (MARGIN + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1])
+                X_MARGIN + X_OFFSET + abs(n.coordinates[0] - x_range[0]) * zoom_multiplier[0],
+                H - (Y_MARGIN + Y_OFFSET + abs(n.coordinates[1] - y_range[0]) * zoom_multiplier[1])
             )
 
         # Returns True or False if the mouse is over the current node
@@ -114,10 +121,19 @@ class GraphGenerator:
             pygame.draw.circle(screen, explored_color, zoom(node), NODE_RADIUS+2)
 
         # Returns True or False if the search has reached a dead end on this edge
-        dead_end = lambda node, action: node in explored and action in explored and not action in path
+        dead_end = lambda node, action: (
+                node in explored
+                and action in explored
+                and not node in goals
+                and not action in path
+            )
 
         # Returns True or False if the edge belongs to the solution
-        solution_edge = lambda node, action: node in path and action in path and path.index(action)-path.index(node) == 1
+        solution_edge = lambda node, action: (
+                node in path
+                and action in path
+                and path.index(action)-path.index(node) == 1
+            )
 
         # Returns (x,y) for the midpoint between a node and an action node
         edge_midpoint = lambda n_pos, a_pos: ((n_pos[0]+a_pos[0])//2, (n_pos[1]+a_pos[1])//2)
@@ -144,7 +160,7 @@ class GraphGenerator:
             for action, cost in edges[node].items():
                 mid = edge_midpoint(zoom(node), zoom(action))
                 if solution_edge(node, action) or hovering_over_node(node):
-                    h = problem.distance_heuristic(node)
+                    h = problem.distance_heuristic(action)
                     if algorithm == GBFS.name:
                         GBFS_text = FONT.render(f"h(x): {h:.2f}", True, BLACK)
                         text_centered = GBFS_text.get_rect(center = mid)
@@ -177,24 +193,38 @@ class GraphGenerator:
                 coords_text = FONT.render(str(node.coordinates), True, BLACK)
                 screen.blit(coords_text, coords_text.get_rect(center = coords_text_pos))
         
-        # Draw text info
+        # Draw text in side panel
         algo_text = f"Algorithm: {algorithm}"
         screen.blit(LARGE_FONT.render(algo_text, True, BLACK), (10, 10))
-        screen.blit(FONT.render("R: New Graph", True, BLACK), (10, 50))
         algo_options = [DFS, BFS, GBFS, AS, IDDFS, BS]
         for i in range(len(algo_options)):
             algo_color = BLACK
             if algo_options[i].name == algorithm:
                 algo_color = RED
-            screen.blit(FONT.render(f"{i+1}: {algo_options[i].name}", True, algo_color), (10, 80 + i*20))
+            screen.blit(FONT.render(f"{i+1}: {algo_options[i].name}", True, algo_color), (10, 50 + i*20))
         if explored:
-            path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {','.join(map(str, explored))}"
+            path_text = f"Explored {len(explored)} node{'' if len(explored) == 1 else 's'}: {' → '.join(map(str, explored))}"
             screen.blit(FONT.render(path_text, True, BLACK), (10, H-65))
         if path:
             path_text = f"Final path: [{', '.join(map(str, path))}] (Edges: {len(path)-1})"
         else:
             path_text = "No path found"
         screen.blit(LARGE_FONT.render(path_text, True, BLACK), (10, H-40))
+
+        screen.blit(FONT.render("Number of nodes", True, BLACK), (10, 200))
+        screen.blit(FONT.render(str(len(nodes)), True, BLACK), (10, 220))
+        screen.blit(FONT.render("Numbers of edges", True, BLACK), (10, 250))
+        screen.blit(FONT.render(str(sum([len(n) for n in edges.values()])), True, BLACK), (10, 270))
+
+        new_graph_text = 370
+        pygame.draw.rect(screen, GRAY, [0,new_graph_text-10, 155,150], 2)
+        screen.blit(FONT.render("N: New Graph", True, BLACK), (10, new_graph_text))
+        screen.blit(FONT.render("New graph with...", True, BLACK), (10, new_graph_text + 30))
+        screen.blit(FONT.render("▲: One more node", True, BLACK), (10, new_graph_text + 50))
+        screen.blit(FONT.render("▼: One less node", True, BLACK), (10, new_graph_text + 70))
+        screen.blit(FONT.render("►: Higher % of edges", True, BLACK), (10, new_graph_text + 90))
+        screen.blit(FONT.render("◄: Lower % of edges", True, BLACK), (10, new_graph_text + 110))
+
 
 def create_search_algorithm(key, problem):
     method_obj = None
@@ -216,11 +246,13 @@ def create_search_algorithm(key, problem):
     return method_obj
 
 def main():
+    num_of_nodes = 10
+    num_of_edges = 20
+
     if len(sys.argv) == 2:
         problem = GraphGenerator.load_from_file(sys.argv[1])
     else:
-        problem = GraphGenerator.generate_random()
-
+        problem = GraphGenerator.generate_random(num_of_nodes, num_of_edges)
 
     algorithms = {
         "1": DFS.name,
@@ -236,6 +268,8 @@ def main():
     algo_obj = create_search_algorithm(current_algo, problem)
     algo_obj.search()
 
+    new_graph_inputs = [pygame.K_n, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -245,8 +279,18 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return
-                if event.key == pygame.K_r:  # New graph
-                    problem = GraphGenerator.generate_random()
+                if event.key in new_graph_inputs:  # New graph
+                    match event.key:
+                        case pygame.K_UP:
+                            num_of_nodes += 1
+                        case pygame.K_DOWN:
+                            num_of_nodes = max(num_of_nodes - 1, 3)
+                            num_of_edges = min(num_of_edges, (num_of_nodes - 1) * num_of_nodes)
+                        case pygame.K_LEFT:
+                            num_of_edges = max(num_of_edges - 1, 0)
+                        case pygame.K_RIGHT:
+                            num_of_edges = min(num_of_edges + 1, (num_of_nodes - 1) * num_of_nodes)
+                    problem = GraphGenerator.generate_random(num_of_nodes, num_of_edges)
                     algo_obj = create_search_algorithm(current_algo, problem)
                     algo_obj.search()
                 elif event.unicode in algorithms:

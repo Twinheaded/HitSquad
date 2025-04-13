@@ -1,7 +1,5 @@
 from .search_method import SearchMethod
 
-from .search_method import SearchMethod
-
 class IDDFS(SearchMethod):
     name = "IDDFS"
 

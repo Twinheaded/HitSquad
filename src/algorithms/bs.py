@@ -30,17 +30,17 @@ class BS(SearchMethod):
             queue.append((n, p, c))
         return None, nodes_created, []
 
-    def heuristic(node, destinations, coords):
-        if node in destinations:
-            return 0
-        x1, y1 = coords[node]
-        min_dist = float('inf')
-        for d in destinations:
-            x2, y2 = coords[d]
-            dist = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
-            if dist < min_dist:
-                min_dist = dist
-        return min_dist
+    # def heuristic(node, destinations, coords):
+    #     if node in destinations:
+    #         return 0
+    #     x1, y1 = coords[node]
+    #     min_dist = float('inf')
+    #     for d in destinations:
+    #         x2, y2 = coords[d]
+    #         dist = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
+    #         if dist < min_dist:
+    #             min_dist = dist
+    #     return min_dist
 
 
         ################

@@ -1,22 +1,29 @@
+from .site import Site
+from .link import Link
 import numpy as np
 
-class TBRGS():
+class TrafficProblem():
     """
     The Traffic-Based Route Guidance Problem.
-    Ported from the "Problem" class in 2A - only attribute names have been edited.he Traffic-Based 
+    Ported from the "Problem" class in 2A - only attribute names have been edited.
 
     Contains all sites and connecting links.
     """
 
-    def __init__(self, sites, origin, goal, edges):
+    def __init__(self, sites, origin, destination, links):
         self.sites = sites      # [<Site>, <Site>, ...] - All sites in the problem
         self.origin = origin    # <Site> - first site of the search
         self.destination = destination        # <Site> - the final site of the search
-        self.links = links      # {<Site>:{<Site>:<cost>, <Site>:<cost>, ...}, ...}
+        self.links = links      # [<Link>, <Link>, ...]
                           
     # Returns a set of states the agent can traverse to from site 's'. 
     def get_actions(self, s):
-        return self.edges.setdefault(s, {})
+        actions = {}
+        for link in self.links:
+            if link.origin == s:
+                actions[link.destination] = link.travel_time
+        return actions
+        # return self.links.setdefault(s, {})
 
     # Returns a bool: is site 's' the destination?
     def goal_test(self, s):
@@ -24,7 +31,10 @@ class TBRGS():
 
     # (path_cost() in 2A) returns the travel time of traversing from site A to site B
     def travel_time(self, a, b):
-        return self.edges[a][b] or np.inf
+        for link in self.links:
+            if link.origin == a and link.destination == b:
+                return link.travel_time
+        return np.inf
 
     # Computes the minimum Euclidian distance from site 's' to the destination
     def distance_heuristic(self, s):

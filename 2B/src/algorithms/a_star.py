@@ -7,22 +7,22 @@ class AS(SearchMethod):
         h = self.problem.distance_heuristic
 
         while self.frontier:
-            node, path = self.frontier.pop() # state - the current node
-            path = path + [node]
-            self.explored.append(node)
+            current_site, path = self.frontier.pop()
+            path = path + [current_site]
+            self.explored.append(current_site)
 
-            if self.problem.goal_test(node):
-                self.result = node
+            if self.problem.goal_test(current_site):
+                self.result = current_site
                 self.final_path = path
                 return
 
             ## A list of connected nodes (actions) sorted by the shortest distance to the nearest destination
-            actions_sorted_by_id = [a for a in sorted(self.problem.get_actions(node).keys(), key=lambda x: x.node_id, reverse=True)]
-            actions = [a for a in sorted(actions_sorted_by_id, key=lambda x: self.problem.path_cost(node, x) + h(x), reverse=True)]
-            for a in actions:
-                if not a in self.explored:
-                    self.frontier.append((a, path))
+            neighbors_sorted_by_id = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
+            neighbors = [a for a in sorted(neighbors_sorted_by_id, key=lambda x: self.problem.travel_time(current_site, x) + h(x), reverse=True)]
+            for neighbor in neighbors:
+                if not neighbor in self.explored:
+                    self.frontier.append((neighbor, path))
 
             ################
-            # self.print_state(node, actions) # <-- For debugging only
+            self.print_state(current_site, neighbors) # <-- For debugging only
             ################

@@ -7,22 +7,22 @@ class BS(SearchMethod):
         h = self.problem.distance_heuristic
 
         while self.frontier:
-            node, path = self.frontier.pop()
-            path = path + [node]
-            self.explored.append(node)
+            current_site, path = self.frontier.pop()
+            path = path + [current_site]
+            self.explored.append(current_site)
 
-            if self.problem.goal_test(node):
-                self.result = node
+            if self.problem.goal_test(current_site):
+                self.result = current_site
                 self.final_path = path
                 return
 
-            ## A list of connected nodes (actions) sorted by the shortest distance to the nearest destination
-            actions_sorted_by_id = [a for a in sorted(self.problem.get_actions(node).keys(), key=lambda x: x.node_id, reverse=True)]
+            ## A list of connected sites (actions) sorted by the shortest distance to the nearest destination
+            actions_sorted_by_id = [a for a in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
             actions = [a for a in sorted(actions_sorted_by_id, key=lambda x: h(x), reverse=True)]
             for a in actions[-beam_width:]:
                 if not a in self.explored:
                     self.frontier.append((a, path))
 
             ################
-            # self.print_state(node, actions) # <-- For debugging only
+            self.print_state(current_site, actions) # <-- For debugging only
             ################

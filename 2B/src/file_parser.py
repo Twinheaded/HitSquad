@@ -1,48 +1,94 @@
 import regex as re
+import pandas as pd
 
-from .node import Node
-from .problem import Problem
+from .site import Site
+from .traffic_problem import TrafficProblem
 
 class FileParser:
-    TEST_DIR_PATH = "src/tests/"
-    def __init__(self):
-        self.init = None        # <Node> - the first node of the search
-        self.goal = []          # [<Node>, <Node>, ...] - a list of goal states
+    DATA_DIR_PATH = "src/data/"
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.origin = None        # <Site> - the first site of the search
+        self.dest = []          # <Dest> - the final site of the search
         self.nodes_by_id = {}
-        self.edges = {}         # {<Node>:{<action>:<cost>, <action>:<cost>, ...}, ...}
+        self.links = {}         # {<Site>:{<Site>:travel_time, <Site>:travel_time, ...}, ...}
 
-    def create_problem(self):
-        return Problem([n for n in self.nodes_by_id.values()], self.init, self.goal, self.edges)
+    # def create_problem(self):
+        # return TrafficProblem([n for n in self.nodes_by_id.values()], self.init, self.goal, self.edges)
         
-    def parse(self, filename):
-        format_error = "\nInput file is not written in the correct format.\n"
-        self.nodes_by_id = {}
-        f = open(self.TEST_DIR_PATH + filename, "r")
-        assert f.readline().strip() == 'Nodes:', wrong_format_error
-        node_str = f.readline().strip()        # Line under the 'Nodes:' heading
-        while node_str != "Edges:":
-            assert re.match(r'^\d+: \(\d+,\d+\)$', node_str), wrong_format_error # RegEx for '#: (#,#)'
-            node_id, x, y = [int(x) for x in re.split(r'\D+', node_str[:-1])]
-            self.nodes_by_id[node_id] = Node(node_id,(x,y))
-            node_str = f.readline().strip()
-        edge_str = f.readline().strip()        # Line under the 'Edges:' heading
-        while edge_str:                        # Continue until an empty line
-            # state      - the 'from' address (Int)
-            # transition - the 'to' address (Node)
-            # cost       - the expense of traversing (Int)
-            assert re.match(r'^\(\d+,\d+\): \d+$', edge_str)  # RegEx for the text format, '(#,#): #'
-            s, t, c = [int(x) for x in re.split(r'\D+', edge_str[1:])]
-            s = self.nodes_by_id[s]
-            t = self.nodes_by_id[t]
-            # Connect s -> t by an edge with a cost of c
-            if s in self.edges:
-                self.edges[s].update({t:c})
+    def parse(self):
+        sites_data = pd.read_csv(
+                self.DATA_DIR_PATH + self.file_name,
+                dtype=str,
+                usecols=[
+                    "SCATS Number",
+                    "Location",
+                    "NB_LATITUDE",
+                    "NB_LONGITUDE",
+                    "Date",
+                    "V00","V01","V02","V03","V04","V05","V06","V07","V08","V09","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22","V23","V24","V25","V26","V27","V28","V29","V30","V31","V32","V33","V34","V35","V36","V37","V38","V39","V40","V41","V42","V43","V44","V45","V46","V47","V48","V49","V50","V51","V52","V53","V54","V55","V56","V57","V58","V59","V60","V61","V62","V63","V64","V65","V66","V67","V68","V69","V70","V71","V72","V73","V74","V75","V76","V77","V78","V79","V80","V81","V82","V83","V84","V85","V86","V87","V88","V89","V90","V91","V92","V93","V94","V95"
+                    ])
+
+        # sites = [Site(s[1]["SCATS Number"], s[1]["Location"]) for s in sites_data.iterrows()]
+        # sites = [s[1]['SCATS Number'] for s in sites_data.iterrows()]
+        sites = []
+        roads_in_site = []
+        prev_scats_num = sites_data.loc[0]["SCATS Number"]
+
+        for index, s in sites_data.iterrows():
+            scats_num = s["SCATS Number"]
+            # roads_record = re.search(r"^(?P<first>[\w\. ]+) [NSEW]{1,2} of (?P<second>[\w\. ]+)$", s.Location)
+            if scats_num != prev_scats_num and not scats_num in [s.scats_num for s in sites]:
+                sites.append(Site(scats_num, (s.NB_LATITUDE, s.NB_LONGITUDE), roads_in_site))
+                roads_in_site = []
+                # site.add_road(roads.group('first'))
+                # site.add_road(roads.group('second'))
+
+                # print(roads.group('first'))
+                # print(roads.group('second'))
+                print(sites[-1], sites[-1].roads)
+                # print(roads.group('first'))
+                prev_scats_num = scats_num
             else:
-                self.edges[s] = {t:c}
-            edge_str = f.readline().strip()
-        assert f.readline().strip() == 'Origin:', wrong_format_error
-        self.init = self.nodes_by_id[int(f.readline())]    # initial - the first node of the problem (Node)
-        assert f.readline().strip() == 'Destinations:', wrong_format_error
-        dest_str = f.readline().strip()         # Line under the 'Destinations:' heading
-        assert re.match(r'^\d+(; \d+)*$', dest_str), wrong_format_error # RegEx for '#' or '#; #; ... #'
-        self.goal = [self.nodes_by_id[int(i)] for i in dest_str.split(";")] # [<Node>,<Node>,...]
+                roads = re.split(r" [NSEW]{1,2} of ", s.Location, flags=re.IGNORECASE)
+                for r in roads:
+                    if not r in roads_in_site:
+                        roads_in_site.append(r)
+
+
+
+
+
+        # for item in data.keys:
+        #     print(item[0])
+        # format_error = "\nInput file is not written in the correct format.\n"
+        # self.nodes_by_id = {}
+        # f = open(self.TEST_DIR_PATH + filename, "r")
+        # assert f.readline().strip() == 'Nodes:', wrong_format_error
+        # node_str = f.readline().strip()        # Line under the 'Nodes:' heading
+        # while node_str != "Edges:":
+        #     assert re.match(r'^\d+: \(\d+,\d+\)$', node_str), wrong_format_error # RegEx for '#: (#,#)'
+        #     node_id, x, y = [int(x) for x in re.split(r'\D+', node_str[:-1])]
+        #     self.nodes_by_id[node_id] = Node(node_id,(x,y))
+        #     node_str = f.readline().strip()
+        # edge_str = f.readline().strip()        # Line under the 'Edges:' heading
+        # while edge_str:                        # Continue until an empty line
+        #     # state      - the 'from' address (Int)
+        #     # transition - the 'to' address (Node)
+        #     # cost       - the expense of traversing (Int)
+        #     assert re.match(r'^\(\d+,\d+\): \d+$', edge_str)  # RegEx for the text format, '(#,#): #'
+        #     s, t, c = [int(x) for x in re.split(r'\D+', edge_str[1:])]
+        #     s = self.nodes_by_id[s]
+        #     t = self.nodes_by_id[t]
+        #     # Connect s -> t by an edge with a cost of c
+        #     if s in self.edges:
+        #         self.edges[s].update({t:c})
+        #     else:
+        #         self.edges[s] = {t:c}
+        #     edge_str = f.readline().strip()
+        # assert f.readline().strip() == 'Origin:', wrong_format_error
+        # self.init = self.nodes_by_id[int(f.readline())]    # initial - the first node of the problem (Node)
+        # assert f.readline().strip() == 'Destinations:', wrong_format_error
+        # dest_str = f.readline().strip()         # Line under the 'Destinations:' heading
+        # assert re.match(r'^\d+(; \d+)*$', dest_str), wrong_format_error # RegEx for '#' or '#; #; ... #'
+        # self.goal = [self.nodes_by_id[int(i)] for i in dest_str.split(";")] # [<Node>,<Node>,...]

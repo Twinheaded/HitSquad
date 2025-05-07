@@ -131,23 +131,87 @@ class FileParser:
                         intersections_in_site.append(intersection)
             self.sites.append(Site(num, intersections_in_site))
 
-
-
-        for site in self.sites:
-            print(site.scats_num)
-            for i in site.intersections:
-                print(i.location, i.coordinates)
-                # print(i.flow_records)
-            print()
+        # for site in self.sites:
+        #     print(site.scats_num)
+        #     for i in site.intersections:
+        #         print(i.location, i.coordinates)
+        #         print(i.flow_records)
+        #     print()
 
 
 
         # LINK SITES BY ROADS
-        for o in unique_roads:
-            destinations = []
-            for d in unique_roads:
-                destinations.extend([i for i in intersections if o in i.roads and d in i.roads])
-            for i in [i for i in intersections if o in i.roads]:
-                for d in destinations:
-                    if sum(l.origin == o and l.destination == d for l in self.links) == 0:
-                        self.links.append(Link(i, d))
+        origin_scats = ""
+        dest_scats = ""
+        for origin in unique_roads:
+            origin_intersections = [i for i in intersections if origin in i.roads]
+
+            for i in origin_intersections:
+                for d in [d for d in i.roads if d != origin]:
+                    origin_scats = i.scats_num
+                    dest_scats = d.scats_num
+
+                    print(origin, destination)
+                    print(origin_scats, dest_scats)
+                    print()
+
+            # for destination in unique_roads:
+            #     dest_intersections = [i for i in intersections if destination in i.roads]
+
+
+
+
+                # for destination in [r for r in intersection.roads if r != road]:
+                #     for l in self.links:
+                #         if l.origin != origin and l.destination != destination:
+                #             self.links.append(Link(origin, destination)
+                    # print(road)
+                    # print(i.roads)
+                    # print(r)
+                    # print()
+                # for r in i.roads:
+                #     if r == road and r not in [l.destination for l in self.links):
+
+
+
+
+                # print(a, a.coordinates, a.roads)
+                # print(self.links)
+            # print()
+
+
+
+
+        # for item in data.keys:
+        #     print(item[0])
+        # format_error = "\nInput file is not written in the correct format.\n"
+        # self.nodes_by_id = {}
+        # f = open(self.TEST_DIR_PATH + filename, "r")
+        # assert f.readline().strip() == 'Nodes:', wrong_format_error
+        # node_str = f.readline().strip()        # Line under the 'Nodes:' heading
+        # while node_str != "Edges:":
+        #     assert re.match(r'^\d+: \(\d+,\d+\)$', node_str), wrong_format_error # RegEx for '#: (#,#)'
+        #     node_id, x, y = [int(x) for x in re.split(r'\D+', node_str[:-1])]
+        #     self.nodes_by_id[node_id] = Node(node_id,(x,y))
+        #     node_str = f.readline().strip()
+        # edge_str = f.readline().strip()        # Line under the 'Edges:' heading
+        # while edge_str:                        # Continue until an empty line
+        #     # state      - the 'from' address (Int)
+        #     # transition - the 'to' address (Node)
+        #     # cost       - the expense of traversing (Int)
+        #     assert re.match(r'^\(\d+,\d+\): \d+$', edge_str)  # RegEx for the text format, '(#,#): #'
+        #     s, t, c = [int(x) for x in re.split(r'\D+', edge_str[1:])]
+        #     s = self.nodes_by_id[s]
+        #     t = self.nodes_by_id[t]
+        #     # Connect s -> t by an edge with a cost of c
+        #     if s in self.edges:
+        #         self.edges[s].update({t:c})
+        #     else:
+        #         self.edges[s] = {t:c}
+        #     edge_str = f.readline().strip()
+        # assert f.readline().strip() == 'Origin:', wrong_format_error
+        # self.init = self.nodes_by_id[int(f.readline())]    # initial - the first node of the problem (Node)
+        # assert f.readline().strip() == 'Destinations:', wrong_format_error
+        # dest_str = f.readline().strip()         # Line under the 'Destinations:' heading
+        # assert re.match(r'^\d+(; \d+)*$', dest_str), wrong_format_error # RegEx for '#' or '#; #; ... #'
+        # self.goal = [self.nodes_by_id[int(i)] for i in dest_str.split(";")] # [<Node>,<Node>,...]

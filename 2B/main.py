@@ -16,6 +16,13 @@ if __name__ == "__main__":
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()
 
+    # s1 = next(filter(lambda x: x.scats_num == '0970', fp.sites))
+
+    # print(s1.scats_num, s1.roads)
+    # print(s1.flow_records)
+
+
+
     # s1 = Site(1, (1,1), ["",""])
     # s2 = Site(2, (2,2), ["",""])
     # s3 = Site(3, (3,3), ["",""])

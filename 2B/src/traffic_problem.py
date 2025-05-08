@@ -11,34 +11,32 @@ class TrafficProblem():
     Contains all sites and connecting links.
     """
 
-    def __init__(self, sites, origin, destination, links, time=datetime.time(0,0,0,0)):
+    def __init__(self, sites, intersections, origin, destination, links, time=datetime.time(0,0,0,0)):
         self.sites = sites      # [<Site>, <Site>, ...] - All sites in the problem
+        self.intersections = intersections  # [<Intersection>, <Intersection>, ...] - All intersections in the problem
         self.origin = origin    # <Site> - first site of the search
         self.destination = destination        # <Site> - the final site of the search
         self.links = links      # [<Link>, <Link>, ...]
         self.time = time        # the current time
                           
+    def get_site_at_intersection(self, i):
+        sites = []
+        for s in self.sites:
+            if i in s.intersections:
+                sites.append(s)
+        return sites
+
     # Returns a set of states the agent can traverse to from site 's'. 
     def get_actions(self, s):
-        actions = {}
-        for link in self.links:
-            if link.origin == s:
-                actions[link.destination] = link.travel_time
-        return actions
-        # return self.links.setdefault(s, {})
+        # TODO: Implement get_actions()
+        return self.sites[0]
 
     # Returns a bool: is site 's' the destination?
     def goal_test(self, s):
         return s == self.destination
 
-    # (path_cost() in 2A) returns the travel time of traversing from site A to site B
-    # def travel_time(self, a, b):
-    #     for link in self.links:
-    #         if link.origin == a and link.destination == b:
-    #             return link.travel_time
-    #     return np.inf
-
-    def calculate_travel_time(a, b):
+    # returns the travel time of traversing from site A to site B
+    def travel_time(a, b):
         """
         Formula:
         time = (distance / speed) + time_delay

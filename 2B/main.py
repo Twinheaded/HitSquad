@@ -16,6 +16,24 @@ if __name__ == "__main__":
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()
 
+    problem = fp.create_problem()
+
+    print("\nSITES\n================")
+    print(problem.sites)
+
+    print("\nINTERSECTIONS\n================")
+    for s in problem.sites:
+        print("\n", s.scats_num)
+        for i in s.intersections:
+            print(i.location)
+
+    print("LINKS (filtered to just site 4043)\n================")
+    sites = []
+    for l in problem.links:
+        if l.origin in problem.get_site_at_intersection(l):
+            sites.append(problem.get_site_at_intersection(l))
+    print(sites)
+
     # s1 = next(filter(lambda x: x.scats_num == '0970', fp.sites))
 
     # print(s1.scats_num, s1.roads)

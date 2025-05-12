@@ -64,12 +64,15 @@ class TrafficProblem():
 
     # Computes the minimum Euclidian distance from site 's' to the destination
     def distance_heuristic(self, s):
-        if s == self.destination:
-            return 0
-        min_dist = float('inf')
-        dx = s.coordinates[0] - self.destination.coordinates[0]
-        dy = s.coordinates[1] - self.destination.coordinates[1]
-        dist = (dx**2 + dy**2)**0.5  # Euclidean distance
-        if dist < min_dist:
-            min_dist = dist
+
+        # TODO: update the following code to calculate for the closest intersection at site 's'
+
+        # if s == self.destination:
+        #     return 0
+        # min_dist = float('inf')
+        # dx = s.coordinates[0] - self.destination.coordinates[0]
+        # dy = s.coordinates[1] - self.destination.coordinates[1]
+        # dist = (dx**2 + dy**2)**0.5  # Euclidean distance
+        # if dist < min_dist:
+        #     min_dist = dist
         return min_dist

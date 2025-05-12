@@ -13,12 +13,12 @@ class FileParser:
         self.file_name = file_name
         self.origin = None        # <Site> - the first site of the search
         self.dest = None          # <Site> - the final site of the search
-        self.sites = []
-        self.intersections = [] # [<Intersection>, <Intersection>, ...]
-        self.links = []         # [<Link>, <Link>, ...]
+        self.sites = []           # [<Site>, <Site>, ...]
+        self.intersections = []   # [<Intersection>, <Intersection>, ...]
+        self.links = []           # [<Link>, <Link>, ...]
 
-    def create_problem(self):
-        return TrafficProblem(self.sites, self.intersections, self.origin, self.dest, self.links)
+    def create_problem(self, origin, dest):
+        return TrafficProblem(self.sites, self.intersections, origin, dest, self.links)
         
     def parse(self):
         # CREATE SITE OBJECTS
@@ -45,18 +45,17 @@ class FileParser:
             if not site["Location"] in unique_intersections:
                 unique_intersections.append(site["Location"])
 
-            # Extract 'WARRIGAL_RD' and 'TOORAK_RD' from 'WARRIGAL_RD N of TOORAK_RD'
+            # Extract ['WARRIGAL_RD', 'TOORAK_RD'] from 'WARRIGAL_RD N of TOORAK_RD'
             for road in re.split(r" [NSEW]{1,2} of ", site.Location, flags=re.IGNORECASE):
                 if not road in unique_roads:
                     unique_roads.append(road)
 
-
+        # Create Intersection objects for each intersection
         for intersection in unique_intersections:
             scats_num = ""
             lat, long = 0, 0
             roads = re.split(r" [NSEW]{1,2} of ", intersection, flags=re.IGNORECASE)
             flow_records = {}
-
             for index, site in sites_data.loc[sites_data['Location'] == intersection].iterrows():
                 scats_num = site["SCATS Number"]
                 lat, long = site.NB_LATITUDE, site.NB_LONGITUDE
@@ -64,12 +63,11 @@ class FileParser:
                 time_delay_list = site[[
                     "V00","V01","V02","V03","V04","V05","V06","V07","V08","V09","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22","V23","V24","V25","V26","V27","V28","V29","V30","V31","V32","V33","V34","V35","V36","V37","V38","V39","V40","V41","V42","V43","V44","V45","V46","V47","V48","V49","V50","V51","V52","V53","V54","V55","V56","V57","V58","V59","V60","V61","V62","V63","V64","V65","V66","V67","V68","V69","V70","V71","V72","V73","V74","V75","V76","V77","V78","V79","V80","V81","V82","V83","V84","V85","V86","V87","V88","V89","V90","V91","V92","V93","V94","V95"
                     ]].values.tolist()
-                
                 for i in range(len(time_delay_list)):
                     flow_records[date + timedelta(minutes=i*15)] = time_delay_list[i]
-
             self.intersections.append(Intersection(scats_num, intersection, (lat, long), roads, flow_records))
         
+        # Add Intersections to the .intersection attribute of Site objects
         for num in unique_scats_nums:
             intersections_in_site = []
             for index, site in sites_data.loc[sites_data['SCATS Number'] == num].iterrows():
@@ -78,34 +76,8 @@ class FileParser:
                         intersections_in_site.append(intersection)
             self.sites.append(Site(num, intersections_in_site))
 
-
-        # for site in self.sites:
-        #     print(site.scats_num)
-        #     for i in site.intersections:
-        #         print(i.location, i.coordinates)
-        #         # print(i.flow_records)
-        #     print()
-
-
-        # LINK SITES BY ROADS
-        # for o in unique_roads:
-        #     destinations = []
-        #     for d in unique_roads:
-        #         destinations.extend([i for i in self.intersections if o in i.roads and d in i.roads])
-        #     for i in [i for i in self.intersections if o in i.roads]:
-        #         for d in destinations:
-        #             if not o == d:
-        #                 if sum(l.origin == o and l.destination == d for l in self.links) == 0:
-        #                     self.links.append(Link(i, d))
-
-
+        # Create links between Intersections
         for a in self.intersections:
             for b in self.intersections:
                 if b.scats_num != a.scats_num and (a.roads[0] in b.roads or a.roads[1] in b.roads):
                     self.links.append(Link(a,b))
-
-
-
-
-
-

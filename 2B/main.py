@@ -16,26 +16,28 @@ if __name__ == "__main__":
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()
 
-    problem = fp.create_problem()
+    problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
 
-    # print("\nSITES\n================")
-    # print(problem.sites)
+    print("\nSITES\n================")
+    print(problem.sites)
 
-    # print("\nINTERSECTIONS\n================")
-    # for s in problem.sites:
-        # print("\n", s.scats_num)
-        # for i in s.intersections:
-            # print(i.location)
+    print("\nINTERSECTIONS\n================")
+    for i in problem.intersections:
+        print(i)
 
-    # print("\nLINKS (filtered to just site 4043)\n================")
-    sites = []
-    for l in problem.links:
-        if l.origin in problem.get_site_at_intersection(l):
-            sites.append(problem.get_site_at_intersection(l))
-    # print(problem.links)
-    # print(problem.intersections)
+    print("\nLINKS (filtered to just site 4043)\n================")
+    for link in [l for l in problem.links if l.origin.scats_num == '4043']:
+        print(link)
 
+    print("\nTrafficProblem.get_actions('4043')\n================")
+    for action in problem.get_actions('4043'):
+        print(action)
 
+    print("\nTrafficProblem.goal_test('4043')\n================")
+    print(problem.goal_test('4043'))
+
+    print("\nTrafficProblem.distance_heuristic('2000')\n================")
+    print(problem.distance_heuristic('2000'))
 
 
 
@@ -43,8 +45,6 @@ if __name__ == "__main__":
 
     # print(s1.scats_num, s1.roads)
     # print(s1.flow_records)
-
-
 
     # s1 = Site(1, (1,1), ["",""])
     # s2 = Site(2, (2,2), ["",""])

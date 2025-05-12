@@ -19,17 +19,14 @@ class TrafficProblem():
         self.links = links      # [<Link>, <Link>, ...]
         self.time = time        # the current time
                           
-    def get_site_at_intersection(self, i):
-        sites = []
-        for s in self.sites:
-            if i in s.intersections:
-                sites.append(s)
-        return sites
-
     # Returns a set of states the agent can traverse to from site 's'. 
     def get_actions(self, s):
         # TODO: Implement get_actions()
-        return self.sites[0]
+        actions = []
+        for l in self.links:
+            if l.origin.scats_num == s:
+                actions.append(l.destination)
+        return actions
 
     # Returns a bool: is site 's' the destination?
     def goal_test(self, s):

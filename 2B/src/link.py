@@ -5,4 +5,4 @@ class Link():
         self.destination = destination
 
     def __repr__(self):
-        return f"<Link> origin: {self.origin}, dest: {self.destination}"
+        return f"{self.origin} --> {self.destination}"

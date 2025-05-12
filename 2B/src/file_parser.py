@@ -88,12 +88,24 @@ class FileParser:
 
 
         # LINK SITES BY ROADS
-        for o in unique_roads:
-            destinations = []
-            for d in unique_roads:
-                destinations.extend([i for i in self.intersections if o in i.roads and d in i.roads])
-            for i in [i for i in self.intersections if o in i.roads]:
-                for d in destinations:
-                    if not o == d:
-                        if sum(l.origin == o and l.destination == d for l in self.links) == 0:
-                            self.links.append(Link(i, d))
+        # for o in unique_roads:
+        #     destinations = []
+        #     for d in unique_roads:
+        #         destinations.extend([i for i in self.intersections if o in i.roads and d in i.roads])
+        #     for i in [i for i in self.intersections if o in i.roads]:
+        #         for d in destinations:
+        #             if not o == d:
+        #                 if sum(l.origin == o and l.destination == d for l in self.links) == 0:
+        #                     self.links.append(Link(i, d))
+
+
+        for a in self.intersections:
+            for b in self.intersections:
+                if b.scats_num != a.scats_num and (a.roads[0] in b.roads or a.roads[1] in b.roads):
+                    self.links.append(Link(a,b))
+
+
+
+
+
+

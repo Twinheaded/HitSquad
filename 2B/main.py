@@ -39,29 +39,7 @@ if __name__ == "__main__":
     print("\nTrafficProblem.distance_heuristic('2000')\n================")
     print(problem.distance_heuristic('2000'))
 
-
-
-    # s1 = next(filter(lambda x: x.scats_num == '0970', fp.sites))
-
-    # print(s1.scats_num, s1.roads)
-    # print(s1.flow_records)
-
-    # s1 = Site(1, (1,1), ["",""])
-    # s2 = Site(2, (2,2), ["",""])
-    # s3 = Site(3, (3,3), ["",""])
-    # s4 = Site(4, (4,4), ["",""])
-    # s5 = Site(5, (5,5), ["",""])
-    # links = [
-    #         Link(s1, s4, 12),
-    #         Link(s2, s3, 23),
-    #         Link(s4, s3, 23),
-    #         Link(s4, s5, 23),
-    #         Link(s5, s2, 23),
-    #         Link(s2, s1, 23),
-    #         ]
-
-    # p1 = TrafficProblem([s1, s2, s3, s4], s4, s1, links)
-
-    # searchObj = IDDFS(p1)
+    # TODO: Make this code work:
+    # searchObj = DFS(problem)
     # searchObj.search()
     # print(searchObj.result)

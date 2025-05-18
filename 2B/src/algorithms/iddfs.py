@@ -7,15 +7,17 @@ class IDDFS(SearchMethod):
         super().__init__(problem)
         self.frontier = [(self.problem.origin, [], 0)] # Same as parent class but with a third 'depth' value
 
-    def search(self):
+    def search(self, start_scats, goal_scats):
+        start = self.problem.get_intersection_by_scats(start_scats)
+        goal = self.problem.get_intersection_by_scats(goal_scats)
         depth = 0
         while True:
-            if self.depth_limited_dfs(depth):
-                return
+            self.frontier = [(start, [], 0)]
+            if self.depth_limited_dfs(goal, depth):
+                return self.final_path
             depth += 1
 
-    def depth_limited_dfs(self, depth_limit):   # also known as Depth Limited Search (DLS)
-        depth = 0
+    def depth_limited_dfs(self, goal, depth_limit):   # also known as Depth Limited Search (DLS)
         local_explored = []
         
         while self.frontier:
@@ -23,22 +25,20 @@ class IDDFS(SearchMethod):
             path = path + [current_site]
             local_explored.append(current_site)
 
-            if self.problem.goal_test(current_site):
+            if current_site == goal or self.problem.goal_test(current_site):
                 self.result = current_site
                 self.explored += [current_site]
                 self.final_path = path
                 return True
 
             if depth > depth_limit:     
-                self.frontier = [(self.problem.origin, [], 0)] # Reset frontier to be ready for the next depth
                 self.explored += local_explored                 # self.explored will hold the paths of all DLS iterations
                 return False
 
             actions = [site for site in reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num))]
-            depth += 1
             for a in actions:
                 if not a in local_explored:
-                    self.frontier.append((a, path, depth))
+                    self.frontier.append((a, path, depth + 1))
 
             ################
             self.print_state(current_site, actions) # <-- For debugging only

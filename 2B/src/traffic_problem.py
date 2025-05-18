@@ -76,3 +76,9 @@ class TrafficProblem():
         # if dist < min_dist:
         #     min_dist = dist
         return min_dist
+
+    def get_intersection_by_scats(self, scats_num):
+        for intersection in self.intersections:
+            if intersection.scats_num == scats_num:
+                return intersection
+        return None

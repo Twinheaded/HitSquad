@@ -3,26 +3,33 @@ from .search_method import SearchMethod
 class BS(SearchMethod):
     name = "BS"
 
-    def search(self, beam_width=2):
+    def search(self, start_scats, goal_scats, beam_width=2):
+        # Convert SCATS numbers to Intersection objects if needed
+        start = self.problem.get_intersection_by_scats(start_scats)
+        goal = self.problem.get_intersection_by_scats(goal_scats)
         h = self.problem.distance_heuristic
+
+        self.frontier = [(start, [])]
+        self.explored = []
+        self.result = None
+        self.final_path = []
 
         while self.frontier:
             current_site, path = self.frontier.pop()
             path = path + [current_site]
             self.explored.append(current_site)
 
-            if self.problem.goal_test(current_site):
+            if current_site == goal or self.problem.goal_test(current_site):
                 self.result = current_site
                 self.final_path = path
-                return
+                return path  # Return the path as a list of Intersection objects
 
-            ## A list of connected sites (actions) sorted by the shortest distance to the nearest destination
             actions_sorted_by_id = [a for a in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
             actions = [a for a in sorted(actions_sorted_by_id, key=lambda x: h(x), reverse=True)]
             for a in actions[-beam_width:]:
-                if not a in self.explored:
+                if a not in self.explored and all(a != f[0] for f in self.frontier):
                     self.frontier.append((a, path))
 
-            ################
-            self.print_state(current_site, actions) # <-- For debugging only
-            ################
+            # self.print_state(current_site, actions) # For debugging only
+
+        return []  # Return empty list if no path found

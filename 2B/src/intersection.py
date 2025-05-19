@@ -12,4 +12,4 @@ class Intersection:
         self.flow_records = flow_records  # {datetime: int, datetime: int, ...} - a set of flow data, compiled from all days/times at this intersection
 
     def __repr__(self):
-        return f"{self.scats_num} {self.location}"
+        return f"{self.scats_num} {self.location} {self.coordinates}"

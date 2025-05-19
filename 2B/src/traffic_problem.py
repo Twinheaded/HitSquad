@@ -21,7 +21,6 @@ class TrafficProblem():
                           
     # Returns a set of states the agent can traverse to from site 's'. 
     def get_actions(self, s):
-        # TODO: Implement get_actions()
         actions = []
         for l in self.links:
             if l.origin.scats_num == s:

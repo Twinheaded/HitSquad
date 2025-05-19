@@ -14,8 +14,8 @@ class TrafficProblem():
     def __init__(self, sites, intersections, origin, destination, links, time=datetime.time(0,0,0,0)):
         self.sites = sites      # [<Site>, <Site>, ...] - All sites in the problem
         self.intersections = intersections  # [<Intersection>, <Intersection>, ...] - All intersections in the problem
-        self.origin = origin    # <Site> - first site of the search
-        self.destination = destination        # <Site> - the final site of the search
+        self.origin = next(s for s in self.sites if s.scats_num == origin)    # <Site> - first site of the search
+        self.destination = next(s for s in self.sites if s.scats_num == destination)        # <Site> - the final site of the search
         self.links = links      # [<Link>, <Link>, ...]
         self.time = time        # the current time
                           
@@ -24,7 +24,7 @@ class TrafficProblem():
         actions = []
         for l in self.links:
             if l.origin.scats_num == s:
-                actions.append(l.destination)
+                actions.append(self.get_site_by_intersection(l.destination))
         return actions
 
     # Returns a bool: is site 's' the destination?
@@ -80,4 +80,10 @@ class TrafficProblem():
         for intersection in self.intersections:
             if intersection.scats_num == scats_num:
                 return intersection
+        return None
+
+    def get_site_by_intersection(self, intersection):
+        for site in self.sites:
+            if intersection in site.intersections:
+                return site
         return None

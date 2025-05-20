@@ -12,3 +12,12 @@ class Site:
 
     def __repr__(self):
         return f"{self.scats_num}"
+
+    def __hash__(self):
+        return hash(self.scats_num)
+
+    def __eq__(self, other):
+        if isinstance(other, Site):
+            if self.scats_num == other.scats_num:
+                return True
+        return False

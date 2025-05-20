@@ -14,8 +14,8 @@ class TrafficProblem():
     def __init__(self, sites, intersections, origin, destination, links, time=datetime.time(0,0,0,0)):
         self.sites = sites      # [<Site>, <Site>, ...] - All sites in the problem
         self.intersections = intersections  # [<Intersection>, <Intersection>, ...] - All intersections in the problem
-        self.origin = origin    # <Site> - first site of the search
-        self.destination = destination        # <Site> - the final site of the search
+        self.origin = next(s for s in self.sites if s.scats_num == origin)    # <Site> - first site of the search
+        self.destination = next(s for s in self.sites if s.scats_num == destination)        # <Site> - the final site of the search
         self.links = links      # [<Link>, <Link>, ...]
         self.time = time        # the current time
                           
@@ -24,7 +24,7 @@ class TrafficProblem():
         actions = []
         for l in self.links:
             if l.origin.scats_num == s:
-                actions.append(l.destination)
+                actions.append(self.get_site_by_intersection(l.destination))
         return actions
 
     # Returns a bool: is site 's' the destination?
@@ -61,23 +61,30 @@ class TrafficProblem():
 
         return 120 # travel time (seconds?)
 
-    # Computes the minimum Euclidian distance from site 's' to the destination
+    # Computes the Euclidian distance of the closest intersections between site 's' and the destination
     def distance_heuristic(self, s):
+        if self.goal_test(s):
+            return 0
 
-        # TODO: update the following code to calculate for the closest intersection at site 's'
-
-        # if s == self.destination:
-        #     return 0
-        # min_dist = float('inf')
-        # dx = s.coordinates[0] - self.destination.coordinates[0]
-        # dy = s.coordinates[1] - self.destination.coordinates[1]
-        # dist = (dx**2 + dy**2)**0.5  # Euclidean distance
-        # if dist < min_dist:
-        #     min_dist = dist
+        min_dist = float('inf')
+        for site_i in s.intersections: # Intersections of site 's'
+            for dest_i in self.destination.intersections: # Intersections of the destination site
+                d_lat = site_i.coordinates[0] - dest_i.coordinates[0]
+                d_long = site_i.coordinates[1] - dest_i.coordinates[1]
+                dist = (d_lat**2 + d_long**2)**0.5  # Euclidean distance
+                print("=", dist)
+                if dist < min_dist:
+                    min_dist = dist
         return min_dist
 
-    def get_intersection_by_scats(self, scats_num):
-        for intersection in self.intersections:
-            if intersection.scats_num == scats_num:
-                return intersection
+    def get_site_by_scats(self, scats_num):
+        for site in self.sites:
+            if site.scats_num == scats_num:
+                return site
+        return None
+
+    def get_site_by_intersection(self, intersection):
+        for site in self.sites:
+            if intersection in site.intersections:
+                return site
         return None

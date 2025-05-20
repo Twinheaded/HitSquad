@@ -5,7 +5,7 @@ class IDDFS(SearchMethod):
 
     def __init__(self, problem):
         super().__init__(problem)
-        self.frontier = [(self.problem.origin, [], 0)] # Same as parent class but with a third 'depth' value
+        self.frontier = [(self.problem.initial, [], 0)] # Same as parent class but with a third 'depth' value
 
     def search(self):
         depth = 0
@@ -30,17 +30,17 @@ class IDDFS(SearchMethod):
                 return True
 
             if depth > depth_limit:     
-                self.frontier = [(self.problem.origin, [], 0)] # Reset frontier to be ready for the next depth
+                self.frontier = [(self.problem.initial, [], 0)] # Reset frontier to be ready for the next depth
                 self.explored += local_explored                 # self.explored will hold the paths of all DLS iterations
                 return False
 
             actions = [site for site in reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num))]
             depth += 1
-            for a in actions:
-                if not a in local_explored:
-                    self.frontier.append((a, path, depth))
+            for site in actions:
+                if not site in local_explored:
+                    self.frontier.append((site, path, depth))
 
             ################
-            self.print_state(current_site, actions) # <-- For debugging only
+            # self.print_state(node, actions) # <-- For debugging only
             ################
         return False

@@ -64,25 +64,13 @@ def search_method_demo(problem, search_method):
     """
     searchObj = ALGORITHMS[search_method](problem)
 
-    # i = 1
-    # match i:
-    #     case 1: 
-    #         searchObj = DFS(problem)
-    #     case 2:
-    #         searchObj = BFS(problem)
-    #     case 3:
-    #         searchObj = GBFS(problem)
-    #     case 4:
-    #         searchObj = AS(problem)
-    #     case 5:
-    #         searchObj = IDDFS(problem)
-    #     case 6:
-    #         searchObj = BS(problem)
-
     searchObj.search()
-    print(searchObj.result)
-    print(searchObj.final_path)
-    print(len(searchObj.final_path))
+    print()
+    print("Search method:", searchObj.name)
+    print("Result:", searchObj.result)
+    print("Final path:", searchObj.final_path, "\n")
+    print("Explored:", searchObj.explored)
+    print("(", len(searchObj.explored), "intersections explored )\n")
 
 def ars_ml_algorithm_demo(problem):
     """
@@ -118,6 +106,7 @@ if __name__ == "__main__":
     fp.parse()
     problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
 
+    # NOTE: Uncomment any of these to run its demo
     # data_processing_demo(problem)
     search_method_demo(problem, 'DFS')
     # ars_ml_algorithm_demo(problem)

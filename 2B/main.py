@@ -37,11 +37,25 @@ if __name__ == "__main__":
     # print(problem.goal_test('4043'))
 
     # TODO: Finish the TrafficProblem.distance_heuristic() method:
-    # print("\nTrafficProblem.distance_heuristic('2000')\n================")
-    # print(problem.distance_heuristic('2000'))
+    # print("\nTrafficProblem.distance_heuristic(problem.get_site_by_scats('2000')\n================")
+    # print(problem.distance_heuristic(problem.get_site_by_scats('2000')))
+
 
     # TODO: Make this code work:
-    searchObj = DFS(problem)
+    i = 1
+    match i:
+        case 1: 
+            searchObj = DFS(problem)
+        case 2:
+            searchObj = BFS(problem)
+        case 3:
+            searchObj = GBFS(problem)
+        case 4:
+            searchObj = AS(problem)
+        case 5:
+            searchObj = IDDFS(problem)
+        case 6:
+            searchObj = BS(problem)
     searchObj.search()
     print(searchObj.result)
     print(searchObj.final_path)

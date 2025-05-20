@@ -36,10 +36,8 @@ if __name__ == "__main__":
     # print("\nTrafficProblem.goal_test('4043')\n================")
     # print(problem.goal_test('4043'))
 
-    # TODO: Finish the TrafficProblem.distance_heuristic() method:
     # print("\nTrafficProblem.distance_heuristic(problem.get_site_by_scats('2000')\n================")
     # print(problem.distance_heuristic(problem.get_site_by_scats('2000')))
-
 
     # TODO: Make this code work:
     i = 1

@@ -23,7 +23,7 @@ class TrafficProblem():
     def get_actions(self, s):
         actions = []
         for l in self.links:
-            if l.origin.scats_num == s:
+            if l.origin.scats_num == s.scats_num:
                 actions.append(self.get_site_by_intersection(l.destination))
         return actions
 

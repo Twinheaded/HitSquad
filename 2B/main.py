@@ -3,6 +3,8 @@ from src.file_parser import FileParser
 from src.site import Site
 from src.link import Link
 from src.traffic_problem import TrafficProblem
+from src.ml_selector import train_and_evaluate, collect_benchmark_data, predict_best_algorithm
+
 
 from src.algorithms.search_method import SearchMethod
 from src.algorithms.bfs import BFS
@@ -11,6 +13,17 @@ from src.algorithms.bs import BS
 from src.algorithms.dfs import DFS
 from src.algorithms.gbfs import GBFS
 from src.algorithms.iddfs import IDDFS
+
+
+ALGORITHMS = {
+    "BFS": BFS,
+    "DFS": DFS,
+    "IDDFS": IDDFS,
+    "GBFS": GBFS,
+    "ASTAR": AS
+}
+
+
 
 if __name__ == "__main__":
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
@@ -39,6 +52,31 @@ if __name__ == "__main__":
     # print("\nTrafficProblem.distance_heuristic(problem.get_site_by_scats('2000')\n================")
     # print(problem.distance_heuristic(problem.get_site_by_scats('2000')))
 
+    # ===========================
+    # ML DEMONSTRATION CODE
+    # ===========================
+
+    # print("\nStarting Algorithm Recomendation System(ARS)...")
+    # benchmark_file = "2B/src/data/algorithm_performance.csv"
+    # X, y_runtime, y_cost = collect_benchmark_data(benchmark_file)
+
+    # if len(X) == 0:
+    #    print("No data found in data directory or data could not be parsed. Please check your data files.")
+    #    exit()
+
+    # clf_runtime = train_and_evaluate(X, y_runtime, "Best Runtime")
+    # clf_cost = train_and_evaluate(X, y_cost, "Best Cost")
+
+    # best_runtime, best_cost = predict_best_algorithm(problem.graph, clf_runtime, clf_cost)
+    # print(f"ML predicts best for runtime: {best_runtime}")
+    # print(f"ML predicts best for cost: {best_cost}")
+
+    # AlgorithmClass = ALGORITHMS[best_runtime]
+    # searchObj = AlgorithmClass(problem)
+    # searchObj.search()
+    # print("Result:", searchObj.result)
+
+    # ===========================
     # TODO: Make this code work:
     i = 1
     match i:

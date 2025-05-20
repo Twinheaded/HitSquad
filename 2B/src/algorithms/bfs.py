@@ -13,11 +13,12 @@ class BFS(SearchMethod):
                 self.final_path = path + [current_site]
                 return
 
-            neighbors = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num)]
-            for neighbor in neighbors:
-                if neighbor not in self.explored and all(n[0] != neighbor for n in self.frontier):
-                    self.frontier.append((neighbor, path + [current_site]))
+            ## A list of linked sites (actions) sorted by SCATS number
+            actions = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num)]
+            for a in actions:
+                if a not in self.explored and all(n[0] != a for n in self.frontier):
+                    self.frontier.append((a, path + [current_site]))
 
             ################
-            self.print_state(current_site, self.problem.get_actions(current_site)) # <-- For debugging only
+            # self.print_state(current_site, self.problem.get_actions(current_site)) # <-- For debugging only
             ################

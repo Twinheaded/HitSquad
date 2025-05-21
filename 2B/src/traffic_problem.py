@@ -23,7 +23,7 @@ class TrafficProblem():
     def get_actions(self, s):
         actions = []
         for l in self.links:
-            if l.origin.scats_num == s:
+            if l.origin.scats_num == s.scats_num:
                 actions.append(self.get_site_by_intersection(l.destination))
         return actions
 
@@ -32,7 +32,7 @@ class TrafficProblem():
         return s == self.destination
 
     # returns the travel time of traversing from site A to site B
-    def travel_time(a, b):
+    def travel_time(self, a, b):
         """
         Formula:
         time = (distance / speed) + time_delay
@@ -72,7 +72,6 @@ class TrafficProblem():
                 d_lat = site_i.coordinates[0] - dest_i.coordinates[0]
                 d_long = site_i.coordinates[1] - dest_i.coordinates[1]
                 dist = (d_lat**2 + d_long**2)**0.5  # Euclidean distance
-                print("=", dist)
                 if dist < min_dist:
                     min_dist = dist
         return min_dist

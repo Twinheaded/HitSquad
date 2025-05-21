@@ -66,7 +66,7 @@ class FileParser:
                     ]].values.tolist()
                 for i in range(len(time_delay_list)):
                     flow_records[date + timedelta(minutes=i*15)] = time_delay_list[i]
-            self.intersections.append(Intersection(scats_num, intersection, (lat, long), roads, flow_records))
+            self.intersections.append(Intersection(scats_num, intersection, (float(lat), float(long)), roads, flow_records))
         
         # Add Intersections to the .intersection attribute of Site objects
         for num in unique_scats_nums:

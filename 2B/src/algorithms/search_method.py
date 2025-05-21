@@ -6,7 +6,7 @@ class SearchMethod:
         self.problem = problem
         self.frontier = [(problem.origin, [])] # [(<Site>, [path, from, origin])]
         self.explored = []      # [<Site>, <Site>, <Site>, ...]
-        self.destination = None      # <Site>
+        self.result = None      # <Site>
         self.final_path = []    # [<Site>, <Site>, <Site>, ...]
 
     def search(self):

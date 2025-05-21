@@ -17,12 +17,12 @@ class BS(SearchMethod):
                 return
 
             ## A list of connected sites (actions) sorted by the shortest distance to the nearest destination
-            actions_sorted_by_id = [a for a in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
-            actions = [a for a in sorted(actions_sorted_by_id, key=lambda x: h(x), reverse=True)]
-            for a in actions[-beam_width:]:
-                if not a in self.explored:
-                    self.frontier.append((a, path))
+            actions_sorted_by_id = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
+            actions = [site for site in sorted(actions_sorted_by_id, key=lambda x: h(x), reverse=True)]
+            for site in actions[-beam_width:]:
+                if not site in self.explored:
+                    self.frontier.append((site, path))
 
             ################
-            self.print_state(current_site, actions) # <-- For debugging only
+            # self.print_state(current_site, actions) # <-- For debugging only
             ################

@@ -5,19 +5,19 @@ import datetime
 
 class TrafficProblem():
     def __init__(self, sites, intersections, origin, destination, links, time=datetime.time(0,0), estimator=None):
-        self.sites = sites
-        self.intersections = intersections
-        self.origin = origin
-        self.destination = destination
-        self.links = links
-        self.time = time
+        self.sites = sites # [<Site>, <Site>, ...] - All sites in the problem
+        self.intersections = intersections # [<Intersection>, <Intersection>, ...] - All intersections in the problem
+        self.origin = origin # <Site> - first site of the search
+        self.destination = destination # <Site> - the final site of the search
+        self.links = links # [<Link>, <Link>, ...]
+        self.time = time # the current time
         self.estimator = estimator  # TravelTimeEstimator instance
-
+  
     def get_actions(self, s):
         actions = []
         for l in self.links:
-            if l.origin.scats_num == s:
-                actions.append(l.destination)
+            if l.origin.scats_num == s.scats_num:
+                actions.append(self.get_site_by_intersection(l.destination))
         return actions
 
     def goal_test(self, s):

@@ -7,6 +7,7 @@ from .site import Site
 from .link import Link
 from .traffic_problem import TrafficProblem
 
+
 class FileParser:
     DATA_DIR_PATH = "src/data/"
     def __init__(self, file_name):
@@ -81,3 +82,41 @@ class FileParser:
             for b in self.intersections:
                 if b.scats_num != a.scats_num and (a.roads[0] in b.roads or a.roads[1] in b.roads):
                     self.links.append(Link(a,b))
+                    
+    # Phil's code for getting flow and location dicts (Still need to be tested and reworked)
+    def get_flow_dict(self):
+        """
+        Returns {scats_id: [FlowRecord-like dict]}.
+        Useful for use in TravelTimeEstimator.
+        """
+        flow_dict = {}
+        for intersection in self.intersections:
+            scats_id = intersection.scats_num
+            if scats_id not in flow_dict:
+                flow_dict[scats_id] = []
+
+            # Wrap it in an object-like dict with `data` and `date`
+            flow_data_list = []
+            for dt, flow in intersection.flow_records.items():
+                flow_data_list.append({"time": dt.time(), "flow": int(flow)})
+            flow_dict[scats_id].append({
+                "date": dt.date(),
+                "data": flow_data_list
+            })
+
+        return flow_dict
+
+    def get_location_dict(self):
+        """
+        Returns {scats_id: (lat, lon)}.
+        """
+        location_dict = {}
+        for intersection in self.intersections:
+            scats_id = intersection.scats_num
+            location_dict[scats_id] = (
+                float(intersection.coordinates[0]),
+                float(intersection.coordinates[1])
+            )
+        return location_dict
+
+

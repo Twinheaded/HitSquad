@@ -9,11 +9,13 @@ SRC_PATH = "./"
 # nodes = pd.read_csv("2B/gui/boroondara_nodes.csv")
 nodes = pd.read_csv(SRC_PATH + "boroondara_nodes.csv")
 
+
+
 # Create map centered on Boroondara
 m = folium.Map(location=[-37.83, 145.05], zoom_start=13)
 
 # Add Boroondara boundary
-with open(SRC_PATH + "boroondara_boundary.geojson", "r") as f:
+with open("src/source_data/boroondara_boundary.geojson", "r") as f:
     boro_boundary = json.load(f)
 
 folium.GeoJson(

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from src import FileParser, TrafficProblem, ALGORITHMS
+from .map_gui import MapGUI
 # from src.data_structures import Site, Link
 
 class MainGUI:
@@ -56,8 +57,8 @@ class MainGUI:
         destination = self.destination_var.get()
         search_method = self.method_var.get()
 
-        if not (origin and destination):
-            messagebox.showwarning("Input Error", "Please select both Origin and Destination.")
+        if not (origin and destination and search_method):
+            messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
             return
 
         # Create a problem object with the specified origin and destination SCATS sites
@@ -74,3 +75,7 @@ class MainGUI:
             # route_str = f"Route {i+1}: \n"
 
         self.result_text.insert(tk.END, route_str)
+
+        mp = MapGUI(problem.sites, origin, destination, searchObj.final_path)
+        mp.generate()
+        mp.open()

@@ -2,6 +2,8 @@ import regex as re
 import pandas as pd
 from datetime import datetime, timedelta
 
+from src.traffic_utils import haversine_distance
+
 # from .data_structures.intersection import Intersection
 # from .data_structures.site import Site
 # from .data_structures.link import Link
@@ -87,7 +89,11 @@ class FileParser:
         # Create links between Intersections
         for a in self.intersections:
             for b in self.intersections:
-                if b.scats_num != a.scats_num and (a.roads[0] in b.roads or a.roads[1] in b.roads):
+                if all([
+                    b.scats_num != a.scats_num,
+                    a.roads[0] in b.roads or a.roads[1] in b.roads,
+                    haversine_distance(a.coordinates[0], a.coordinates[1], b.coordinates[0], b.coordinates[1]) < 3.5
+                    ]):
                     self.links.append(Link(a,b))
                     
     # Phil's code for getting flow and location dicts (Still need to be tested and reworked)

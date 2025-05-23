@@ -11,16 +11,19 @@ class MapGUI:
         self.pins = {} # {Site: (lat, long), ...} - A list of location pins representing the average location of each Site's intersections
         self.origin = origin
         self.destination = destination
-        self.final_path = final_path
+        self.final_path = []
         self.html_file_path = os.getcwd()+"/src/source_data/boroondara_interactive_map.html"
 
         for site in sites:
             intersection_coords = [i.coordinates for i in site.intersections]
             self.pins[site.scats_num] = tuple(map(float, np.mean(intersection_coords, axis=0)))
 
+        for i in final_path:
+            self.final_path.append(self.pins[i.scats_num])
+
     def generate(self):
         # Create map centered on Boroondara
-        m = folium.Map(location=[-37.83, 145.05], zoom_start=13)
+        m = folium.Map(location=[-37.83, 145.05], zoom_start=13, tiles="cartodbpositron")
 
         # Add Boroondara boundary
         with open("src/source_data/boroondara_boundary.geojson", "r") as f:
@@ -31,11 +34,14 @@ class MapGUI:
             name="Boroondara Boundary",
             style_function=lambda x: {
                 'fillColor': '#0000ff20',
-                'color': 'blue',
+                'color': 'gray',
                 'weight': 2,
                 'fillOpacity': 0.1
             }
         ).add_to(m)
+
+        if self.final_path:
+            folium.PolyLine(locations=self.final_path, color='red', weight=3, opacity=1).add_to(m)
 
         # Add JS function to store origin/destination
         js = """
@@ -79,6 +85,3 @@ class MapGUI:
 
     def open(self):
         webbrowser.open(self.html_file_path)
-
-
-

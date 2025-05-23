@@ -1,5 +1,5 @@
 from keras.models import Sequential
-from keras.layers import GRU, Dense, Dropout
+from keras.layers import GRU, Dense, Dropout, BatchNormalization
 
 class GRUModel:
     def __init__(self, units, num_features=1, dropout_rate=0.2, output_activation='sigmoid'):
@@ -19,13 +19,22 @@ class GRUModel:
         self.output_activation = output_activation #Not necessary to set either
         self.model = self.build_model()
 
-        def build_model(self):
-            model = Sequential([
-                GRU(self.units[1], input_shape=(self.units[0], self.num_features), return_sequences=True),
-                GRU(self.units[2]),
-                Dropout(self.dropout_rate),
-                Dense(self.units[3], activation=self.output_activation)
-            ])
+    def build_model(self):
+        model = Sequential()
+        model.add(GRU(self.units[1], input_shape=(self.units[0], self.num_features), return_sequences=True))
+        model.add(BatchNormalization())
+        model.add(Dropout(self.dropout_rate))
 
-        def return_model():
-            return self.model
+        model.add(GRU(self.units[2], return_sequences=True))
+        model.add(BatchNormalization())
+        model.add(Dropout(self.dropout_rate))
+
+        model.add(GRU(self.units[2]))
+        model.add(BatchNormalization())
+        model.add(Dropout(self.dropout_rate))
+
+        model.add(Dense(self.units[3], activation=self.output_activation))
+        return model
+
+    def return_model(self):
+        return self.model

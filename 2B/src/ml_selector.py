@@ -54,7 +54,7 @@ def train_and_evaluate(X, y, label):
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     print(f"\n=== {label} ===")
-    print(classification_report(y_test, y_pred))
+    print(classification_report(y_test, y_pred, zero_division=0))
     return clf
 
 def predict_best_algorithm(graph, clf_runtime, clf_cost):
@@ -134,6 +134,19 @@ def collect_benchmark_data_from_fileparser():
                     print(f"Failed to process ({origin.scats_num} -> {dest.scats_num}): {e}")
 
     print("Number of sites:", len(fp.sites))
+
+def run_all_algorithms(problem, algorithms):
+    print("\n=== Running All Algorithms ===")
+    for name, Algo in algorithms.items():
+        print(f"\n--- {name} ---")
+        try:
+            searchObj = Algo(problem)
+            searchObj.search()
+            print("Result:", getattr(searchObj, "result", None))
+            print("Final path:", getattr(searchObj, "final_path", None))
+        except Exception as e:
+            print(f"{name} failed: {e}")
+
 
 if __name__ == "__main__":
     collect_benchmark_data_from_fileparser()

@@ -3,7 +3,8 @@ from src.file_parser import FileParser
 from src.site import Site
 from src.link import Link
 from src.traffic_problem import TrafficProblem
-from src.ml_selector import train_and_evaluate, collect_benchmark_data, predict_best_algorithm
+from src.ars_demo import ars_ml_algorithm_demo
+from src.travel_time.travel_time_estimator import TravelTimeEstimator
 
 
 from src.algorithms.search_method import SearchMethod
@@ -72,41 +73,34 @@ def search_method_demo(problem, search_method):
     print("Explored:", searchObj.explored)
     print("(", len(searchObj.explored), "intersections explored )\n")
 
-def ars_ml_algorithm_demo(problem):
+
     """
     Author: Jordan
     ===========================
-    ML DEMONSTRATION CODE
+    DEMONSTRATION OF ML-BASED ALGORITHM RECOMMENDATION SYSTEM
     ===========================
     """
-
-    print("\nStarting Algorithm Recomendation System(ARS)...")
-    benchmark_file = "2B/src/data/algorithm_performance.csv"
-    X, y_runtime, y_cost = collect_benchmark_data(benchmark_file)
-
-    if len(X) == 0:
-       print("No data found in data directory or data could not be parsed. Please check your data files.")
-       exit()
-
-    clf_runtime = train_and_evaluate(X, y_runtime, "Best Runtime")
-    clf_cost = train_and_evaluate(X, y_cost, "Best Cost")
-
-    best_runtime, best_cost = predict_best_algorithm(problem.graph, clf_runtime, clf_cost)
-    print(f"ML predicts best for runtime: {best_runtime}")
-    print(f"ML predicts best for cost: {best_cost}")
-
-    AlgorithmClass = ALGORITHMS[best_runtime]
-    searchObj = AlgorithmClass(problem)
-    searchObj.search()
-    print("Result:", searchObj.result)
-
-
-if __name__ == "__main__":
+def ARS():
+    # Load and parse dataset
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()
-    problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
+
+    # Set up travel time estimator
+    flow_dict = fp.get_flow_dict()
+    location_dict = fp.get_location_dict()
+    estimator = TravelTimeEstimator(flow_dict, location_dict)
+
+    # Create the problem instance
+    problem = fp.create_problem('0970', '4040')
+    problem.estimator = estimator
+
+    # NOTE: Uncomment the following line to collect benchmark data
+    ars_ml_algorithm_demo(problem, fp.graph)
+
+if __name__ == "__main__":
+    ARS()
 
     # NOTE: Uncomment any of these to run its demo
     # data_processing_demo(problem)
-    search_method_demo(problem, 'DFS')
-    # ars_ml_algorithm_demo(problem)
+    #search_method_demo(problem, 'DFS')
+   

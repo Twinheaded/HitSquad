@@ -1,4 +1,5 @@
-from src import FileParser, Site, Link, TrafficProblem, ALGORITHMS
+from src import FileParser, TrafficProblem, ALGORITHMS
+from src.data_structures import Site, Link
 # from src.ml_selector import train_and_evaluate, collect_benchmark_data, predict_best_algorithm
 
 def data_processing_demo(problem):

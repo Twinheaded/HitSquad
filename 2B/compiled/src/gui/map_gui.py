@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 import folium
 import json
-from folium.plugins import MarkerCluster
+import webbrowser
+import os
 
 class MapGUI:
     def __init__(self, sites, origin, destination, final_path):
@@ -11,68 +12,73 @@ class MapGUI:
         self.origin = origin
         self.destination = destination
         self.final_path = final_path
+        self.html_file_path = os.getcwd()+"/src/source_data/boroondara_interactive_map.html"
 
         for site in sites:
             intersection_coords = [i.coordinates for i in site.intersections]
             self.pins[site.scats_num] = tuple(map(float, np.mean(intersection_coords, axis=0)))
 
-    def draw(self):
+    def generate(self):
         # Create map centered on Boroondara
         m = folium.Map(location=[-37.83, 145.05], zoom_start=13)
 
+        # Add Boroondara boundary
+        with open("src/source_data/boroondara_boundary.geojson", "r") as f:
+            boro_boundary = json.load(f)
 
-# # Add Boroondara boundary
-# with open("src/source_data/boroondara_boundary.geojson", "r") as f:
-#     boro_boundary = json.load(f)
+        folium.GeoJson(
+            boro_boundary,
+            name="Boroondara Boundary",
+            style_function=lambda x: {
+                'fillColor': '#0000ff20',
+                'color': 'blue',
+                'weight': 2,
+                'fillOpacity': 0.1
+            }
+        ).add_to(m)
 
-# folium.GeoJson(
-#     boro_boundary,
-#     name="Boroondara Boundary",
-#     style_function=lambda x: {
-#         'fillColor': '#0000ff20',
-#         'color': 'blue',
-#         'weight': 2,
-#         'fillOpacity': 0.1
-#     }
-# ).add_to(m)
+        # Add JS function to store origin/destination
+        js = """
+        <script>
+        var origin = null;
+        var destination = null;
 
-# # Optional: cluster markers
-# marker_cluster = MarkerCluster().add_to(m)
+        function setPoint(siteId, lat, lon) {
+            if (!origin) {
+                origin = {id: siteId, lat: lat, lon: lon};
+                alert("Origin set: " + siteId);
+            } else if (!destination) {
+                destination = {id: siteId, lat: lat, lon: lon};
+                alert("Destination set: " + siteId + "\\n(Routing ready when integrated)");
+            } else {
+                origin = {id: siteId, lat: lat, lon: lon};
+                destination = null;
+                alert("Origin reset: " + siteId);
+            }
+        }
+        </script>
+        """
 
-# # Add JS function to store origin/destination
-# js = """
-# <script>
-# var origin = null;
-# var destination = null;
+        m.get_root().html.add_child(folium.Element(js))
 
-# function setPoint(siteId, lat, lon) {
-#     if (!origin) {
-#         origin = {id: siteId, lat: lat, lon: lon};
-#         alert("Origin set: " + siteId);
-#     } else if (!destination) {
-#         destination = {id: siteId, lat: lat, lon: lon};
-#         alert("Destination set: " + siteId + "\\n(Routing ready when integrated)");
-#     } else {
-#         origin = {id: siteId, lat: lat, lon: lon};
-#         destination = null;
-#         alert("Origin reset: " + siteId);
-#     }
-# }
-# </script>
-# """
-# m.get_root().html.add_child(folium.Element(js))
+        # Add markers with selection links
+        for scats_num in self.pins:
+            lat, long = self.pins[scats_num]
+            popup = folium.Popup(f"""
+                <b>SCATS ID: {scats_num}</b><br>
+                <a href='#' onclick="setPoint('{scats_num}', {lat}, {long})">Select as O/D</a>
+            """, max_width=250)
+            folium.Marker(
+                location=[lat, long],
+                popup=popup,
+                tooltip="Click to select"
+            ).add_to(m)
 
-# # Add markers with selection links
-# for _, row in nodes.iterrows():
-#     popup = folium.Popup(f"""
-#         <b>SCATS ID: {row['site_id']}</b><br>
-#         <a href='#' onclick="setPoint('{row['site_id']}', {row['latitude']}, {row['longitude']})">Select as O/D</a>
-#     """, max_width=250)
-#     folium.Marker(
-#         location=[row['latitude'], row['longitude']],
-#         popup=popup,
-#         tooltip="Click to select"
-#     ).add_to(marker_cluster)
+        # Save map
+        m.save(self.html_file_path)
 
-# # Save map
-# m.save("./boroondara_interactive_map.html")
+    def open(self):
+        webbrowser.open(self.html_file_path)
+
+
+

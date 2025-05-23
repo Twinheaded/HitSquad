@@ -6,7 +6,7 @@ from folium.plugins import MarkerCluster
 
 class MapGUI:
     def __init__(self, sites, origin, destination, final_path):
-        self.sites = sites
+        self.sites = sites # All site objects to display on the map
         self.pins = {} # {Site: (lat, long), ...} - A list of location pins representing the average location of each Site's intersections
         self.origin = origin
         self.destination = destination
@@ -16,18 +16,10 @@ class MapGUI:
             intersection_coords = [i.coordinates for i in site.intersections]
             self.pins[site.scats_num] = tuple(map(float, np.mean(intersection_coords, axis=0)))
 
-        print(self.pins)
+    def draw(self):
+        # Create map centered on Boroondara
+        m = folium.Map(location=[-37.83, 145.05], zoom_start=13)
 
-        # self.pins =
-
-
-# # Load your cleaned node list
-# # nodes = pd.read_csv("2B/gui/boroondara_nodes.csv")
-# nodes = pd.read_csv(SRC_PATH + "boroondara_nodes.csv")
-
-
-# # Create map centered on Boroondara
-# m = folium.Map(location=[-37.83, 145.05], zoom_start=13)
 
 # # Add Boroondara boundary
 # with open("src/source_data/boroondara_boundary.geojson", "r") as f:

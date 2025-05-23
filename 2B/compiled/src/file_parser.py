@@ -20,6 +20,9 @@ class FileParser:
         self.links = []           # [<Link>, <Link>, ...]
 
     def create_problem(self, origin, dest):
+        scats_nums = [s.scats_num for s in self.sites]
+        if not (origin in scats_nums and dest in scats_nums):
+            raise ValueError(f"Could not find origin or destination site: {origin}, {dest}")
         return TrafficProblem(self.sites, self.intersections, origin, dest, self.links)
         
     def parse(self):

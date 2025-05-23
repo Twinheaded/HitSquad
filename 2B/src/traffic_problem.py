@@ -1,5 +1,6 @@
 from .site import Site
 from .link import Link
+from travel_time.traffic_utils import flow_to_speed, haversine_distance
 import numpy as np
 import datetime
 
@@ -39,17 +40,18 @@ class TrafficProblem():
             raise Exception("No estimator assigned to TrafficProblem.")
         return self.estimator.travel_time(a, b, self.time)
 
-    # Computes the Euclidian distance of the closest intersections between site 's' and the destination
+    # Computes the  distance of the closest intersections between site 's' and the destination
      def distance_heuristic(self, s):
+        """
+        Computes the Haversine (great-circle) distance, in km, of the closest intersections between site 's' and the destination
+        """
         if self.goal_test(s):
             return 0
 
         min_dist = float('inf')
         for site_i in s.intersections: # Intersections of site 's'
             for dest_i in self.destination.intersections: # Intersections of the destination site
-                d_lat = site_i.coordinates[0] - dest_i.coordinates[0]
-                d_long = site_i.coordinates[1] - dest_i.coordinates[1]
-                dist = (d_lat**2 + d_long**2)**0.5  # Euclidean distance
+                dist = haversine_distance(site_i.coordinates[0], site_i.coordinates[1], dest_i.coordinates[0], dest_i.coordinates[1])
                 if dist < min_dist:
                     min_dist = dist
         return min_dist

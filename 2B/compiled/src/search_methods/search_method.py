@@ -1,5 +1,5 @@
-from src.data_structures.traffic_problem import TrafficProblem
-from src.data_structures.site import Site
+from src.traffic_problem import TrafficProblem
+from src.data_structures import Site
 
 class SearchMethod:
     def __init__(self, problem):

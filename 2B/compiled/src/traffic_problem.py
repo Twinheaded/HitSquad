@@ -1,5 +1,4 @@
-from .site import Site
-from .link import Link
+from src.data_structures import Site, Link
 from src.traffic_utils import flow_to_speed, haversine_distance
 import numpy as np
 import datetime

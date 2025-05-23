@@ -39,7 +39,6 @@ class TrafficProblem():
             raise Exception("No estimator assigned to TrafficProblem.")
         return self.estimator.travel_time(a, b, self.time)
 
-    # Computes the  distance of the closest intersections between site 's' and the destination
     def distance_heuristic(self, s):
         """
         Computes the Haversine (great-circle) distance, in km, of the closest intersections between site 's' and the destination
@@ -50,6 +49,18 @@ class TrafficProblem():
         min_dist = float('inf')
         for site_i in s.intersections: # Intersections of site 's'
             for dest_i in self.destination.intersections: # Intersections of the destination site
+                dist = haversine_distance(site_i.coordinates[0], site_i.coordinates[1], dest_i.coordinates[0], dest_i.coordinates[1])
+                if dist < min_dist:
+                    min_dist = dist
+        return min_dist
+
+    def distance_between_sites(self, a, b):
+        """
+        Computes the Haversine (great-circle) distance, in km, of the closest intersections between site 'a' and site 'b'
+        """
+        min_dist = float('inf')
+        for site_i in a.intersections: # Intersections of site 'a'
+            for dest_i in b.intersections: # Intersections of the destination site
                 dist = haversine_distance(site_i.coordinates[0], site_i.coordinates[1], dest_i.coordinates[0], dest_i.coordinates[1])
                 if dist < min_dist:
                     min_dist = dist

@@ -77,7 +77,7 @@ def search_method_demo(problem, search_method):
     """
     Author: Jordan
     ===========================
-    ML DEMONSTRATION CODE
+    DEMONSTRATION OF ML-BASED ALGORITHM RECOMMENDATION SYSTEM
     ===========================
     """
 def ARS():
@@ -91,7 +91,7 @@ def ARS():
     estimator = TravelTimeEstimator(flow_dict, location_dict)
 
     # Create the problem instance
-    problem = fp.create_problem('0970', '2846')
+    problem = fp.create_problem('0970', '4040')
     problem.estimator = estimator
 
     # NOTE: Uncomment the following line to collect benchmark data

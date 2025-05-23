@@ -4,14 +4,6 @@ from tkinter import ttk, messagebox
 from src import FileParser, TrafficProblem, ALGORITHMS
 # from src.data_structures import Site, Link
 
-# Dummy route generator (will be replaced by actual model integration)
-def generate_route(origin, destination):
-    # Placeholder: simulate 2 dummy routes
-    return [
-        {'path': [origin, '2041', destination], 'time': 12.3},
-        {'path': [origin, '2824', destination], 'time': 13.0}
-    ]
-
 class MainGUI:
     def __init__(self, root):
         self.root = root

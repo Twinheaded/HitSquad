@@ -1,21 +1,5 @@
-from src.file_parser import FileParser
-
-# from src.data_structures.site import Site
-# from src.data_structures.link import Link
-# from src.data_structures.traffic_problem import TrafficProblem
-
-from src import ALGORITHMS, Site, Link, TrafficProblem
-
+from src import FileParser, Site, Link, TrafficProblem, ALGORITHMS
 # from src.ml_selector import train_and_evaluate, collect_benchmark_data, predict_best_algorithm
-
-# from src.search_methods.search_method import SearchMethod
-# from src.search_methods.dfs import DFS
-# from src.search_methods.bfs import BFS
-# from src.search_methods.gbfs import GBFS
-# from src.search_methods.a_star import AS
-# from src.search_methods.iddfs import IDDFS
-# from src.search_methods.bs import BS
-
 
 def data_processing_demo(problem):
     """

@@ -1,3 +1,4 @@
+from .file_parser import FileParser
 from .data_structures import TrafficProblem, Site, Intersection, Link
 from .search_methods import SearchMethod, DFS, BFS, GBFS, AS, IDDFS, BS
 

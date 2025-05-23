@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Traffic Route Finder</title>
+
+  <!-- PyScript import -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
   <style>
     body {
       margin: 0;
@@ -73,13 +77,13 @@
 <body>
   <div class="container">
     <h2>Traffic Route Finder</h2>
+    <script type="py" src="test.py"></script>
     <form action="/route" method="POST">
       <label for="origin">Origin (SCATS Number)</label>
       <input type="text" id="origin" name="origin" placeholder="e.g., 2000" required />
 
       <label for="destination">Destination (SCATS Number)</label>
       <input type="text" id="destination" name="destination" placeholder="e.g., 4043" required />
-
       <button type="submit">Confirm</button>
     </form>
   </div>

@@ -1,11 +1,10 @@
 from .search_method import SearchMethod
 
-class AS(SearchMethod):
-    name = "A*"
+class BS(SearchMethod):
+    name = "BS"
 
-    def search(self):
+    def search(self, beam_width=2):
         h = self.problem.distance_heuristic
-        g = self.problem.travel_time
 
         while self.frontier:
             current_site, path = self.frontier.pop()
@@ -17,10 +16,10 @@ class AS(SearchMethod):
                 self.final_path = path
                 return
 
-            ## A list of connected nodes (actions) sorted by the shortest distance to the nearest destination
-            actions_sorted_by_id = sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)
-            actions = sorted(actions_sorted_by_id, key=lambda x: g(current_site, x) + h(x), reverse=True)
-            for site in actions:
+            ## A list of connected sites (actions) sorted by the shortest distance to the nearest destination
+            actions_sorted_by_id = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
+            actions = [site for site in sorted(actions_sorted_by_id, key=lambda x: h(x), reverse=True)]
+            for site in actions[-beam_width:]:
                 if not site in self.explored:
                     self.frontier.append((site, path))
 

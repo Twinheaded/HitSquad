@@ -2,14 +2,15 @@ import regex as re
 import pandas as pd
 from datetime import datetime, timedelta
 
-from .intersection import Intersection
-from .site import Site
-from .link import Link
+# from .data_structures.intersection import Intersection
+# from .data_structures.site import Site
+# from .data_structures.link import Link
+# from .data_structures.traffic_problem import TrafficProblem
 from .traffic_problem import TrafficProblem
-
+from .data_structures import Site, Intersection, Link
 
 class FileParser:
-    DATA_DIR_PATH = "src/data/"
+    DATA_DIR_PATH = "src/source_data/"
     def __init__(self, file_name):
         self.file_name = file_name
         self.origin = None        # <Site> - the first site of the search
@@ -18,15 +19,8 @@ class FileParser:
         self.intersections = []   # [<Intersection>, <Intersection>, ...]
         self.links = []           # [<Link>, <Link>, ...]
 
-    def create_problem(self, origin_scats_num, dest_scats_num):
-        origin_site = next((s for s in self.sites if s.scats_num == origin_scats_num), None)
-        dest_site = next((s for s in self.sites if s.scats_num == dest_scats_num), None)
-
-        if origin_site is None or dest_site is None:
-            raise ValueError(f"Could not find origin or destination site: {origin_scats_num}, {dest_scats_num}")
-
-        return TrafficProblem(self.sites, self.intersections, origin_site, dest_site, self.links)
-
+    def create_problem(self, origin, dest):
+        return TrafficProblem(self.sites, self.intersections, origin, dest, self.links)
         
     def parse(self):
         # CREATE SITE OBJECTS
@@ -89,17 +83,6 @@ class FileParser:
             for b in self.intersections:
                 if b.scats_num != a.scats_num and (a.roads[0] in b.roads or a.roads[1] in b.roads):
                     self.links.append(Link(a,b))
-        
-                # === NEW: BUILD GRAPH ===
-        self.graph = {}
-        for link in self.links:
-            from_site = link.origin.scats_num
-            to_site = link.destination.scats_num
-            weight = link.origin.get_distance(link.destination)  # Ensure this is numeric
-
-            if from_site not in self.graph:
-                self.graph[from_site] = {}
-            self.graph[from_site][to_site] = weight
                     
     # Phil's code for getting flow and location dicts (Still need to be tested and reworked)
     def get_flow_dict(self):

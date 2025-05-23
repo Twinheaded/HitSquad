@@ -5,19 +5,16 @@ class IDDFS(SearchMethod):
 
     def __init__(self, problem):
         super().__init__(problem)
-        self.frontier = [(self.problem.initial, [], 0)] # Same as parent class but with a third 'depth' value
 
-    def search(self):
-        depth = 0
-        while True:
-            if self.depth_limited_dfs(depth):
+    def search(self, max_depth=15):  # Add a max depth limit to avoid infinite loops
+        for depth in range(max_depth + 1):
+            self.frontier = [(self.problem.initial, [], 0)]  # Reset frontier each iteration
+            local_explored = []
+            if self.depth_limited_dfs(depth, local_explored):
                 return
-            depth += 1
+            self.explored += local_explored  # Accumulate explored nodes across depths
 
-    def depth_limited_dfs(self, depth_limit):   # also known as Depth Limited Search (DLS)
-        depth = 0
-        local_explored = []
-        
+    def depth_limited_dfs(self, depth_limit, local_explored):
         while self.frontier:
             current_site, path, depth = self.frontier.pop()
             path = path + [current_site]
@@ -25,20 +22,14 @@ class IDDFS(SearchMethod):
 
             if self.problem.goal_test(current_site):
                 self.result = current_site
-                self.explored += [current_site]
                 self.final_path = path
                 return True
 
-            if depth > depth_limit:     
-                self.frontier = [(self.problem.initial, [], 0)] # Reset frontier to be ready for the next depth
-                self.explored += local_explored                 # self.explored will hold the paths of all DLS iterations
-                return False
-
-            actions = [site for site in reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num))]
-            depth += 1
-            for site in actions:
-                if not site in local_explored:
-                    self.frontier.append((site, path, depth))
+            if depth < depth_limit:
+                actions = list(reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num)))
+                for site in actions:
+                    if site not in local_explored:
+                        self.frontier.append((site, path, depth + 1))
 
             ################
             # self.print_state(node, actions) # <-- For debugging only

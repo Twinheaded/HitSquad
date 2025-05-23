@@ -14,9 +14,9 @@ class BFS(SearchMethod):
                 return
 
             ## A list of linked sites (actions) sorted by SCATS number
-            actions = sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num)
+            actions = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num)]
             for site in actions:
-                if not site in self.explored and all(n[0] != site for n in self.frontier):
+                if site not in self.explored and all(n[0] != site for n in self.frontier):
                     self.frontier.append((site, path + [current_site]))
 
             ################

@@ -11,6 +11,9 @@ from .data_structures import Site, Intersection, Link
 
 class FileParser:
     DATA_DIR_PATH = "src/source_data/"
+    OFFSET_LAT = 0.001497
+    OFFSET_LONG = 0.0013395
+
     def __init__(self, file_name):
         self.file_name = file_name
         self.origin = None        # <Site> - the first site of the search
@@ -70,7 +73,7 @@ class FileParser:
                     ]].values.tolist()
                 for i in range(len(time_delay_list)):
                     flow_records[date + timedelta(minutes=i*15)] = time_delay_list[i]
-            self.intersections.append(Intersection(scats_num, intersection, (float(lat), float(long)), roads, flow_records))
+            self.intersections.append(Intersection(scats_num, intersection, (float(lat)+self.OFFSET_LAT, float(long)+self.OFFSET_LONG), roads, flow_records))
         
         # Add Intersections to the .intersection attribute of Site objects
         for num in unique_scats_nums:

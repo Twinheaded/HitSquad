@@ -4,14 +4,16 @@ import json
 from folium.plugins import MarkerCluster
 
 
+SRC_PATH = "./"
 # Load your cleaned node list
-nodes = pd.read_csv("2B/gui/boroondara_nodes.csv")
+# nodes = pd.read_csv("2B/gui/boroondara_nodes.csv")
+nodes = pd.read_csv(SRC_PATH + "boroondara_nodes.csv")
 
 # Create map centered on Boroondara
 m = folium.Map(location=[-37.83, 145.05], zoom_start=13)
 
 # Add Boroondara boundary
-with open("2B/gui/boroondara_boundary.geojson", "r") as f:
+with open(SRC_PATH + "boroondara_boundary.geojson", "r") as f:
     boro_boundary = json.load(f)
 
 folium.GeoJson(
@@ -64,4 +66,4 @@ for _, row in nodes.iterrows():
     ).add_to(marker_cluster)
 
 # Save map
-m.save("2B/gui/boroondara_interactive_map.html")
+m.save(SRC_PATH + "boroondara_interactive_map.html")

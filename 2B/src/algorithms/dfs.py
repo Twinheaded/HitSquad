@@ -15,7 +15,7 @@ class DFS(SearchMethod):
                 return
 
             ## A list of linked sites (actions) sorted by SCATS number
-            actions = [site for site in reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num))]
+            actions = list(reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num)))
             for site in actions:
                 if not site in self.explored:
                     self.frontier.append((site, path))

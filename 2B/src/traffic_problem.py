@@ -1,69 +1,53 @@
 from .site import Site
 from .link import Link
-from travel_time.traffic_utils import flow_to_speed, haversine_distance
+from src.travel_time.traffic_utils import haversine_distance
 import numpy as np
 import datetime
 
 class TrafficProblem():
-    """
-    The Traffic-Based Route Guidance Problem.
-
-    Contains all sites, intersections, and connecting links.
-    An origin and destination site are set upon initialisation.
-    """
     def __init__(self, sites, intersections, origin, destination, links, time=datetime.time(0,0), estimator=None):
-        self.sites = sites # [<Site>, <Site>, ...] - All sites in the problem
-        self.intersections = intersections # [<Intersection>, <Intersection>, ...] - All intersections in the problem
-        self.origin = next(s for s in self.sites if s.scats_num == origin)    # <Site> - first site of the search
-        self.destination = next(s for s in self.sites if s.scats_num == destination)        # <Site> - the final site of the search
-        self.links = links # [<Link>, <Link>, ...]
-        self.time = time # the current time
-        self.estimator = estimator  # TravelTimeEstimator instance
-  
+        self.sites = sites
+        self.intersections = intersections
+        self.origin = origin  # Site object
+        self.destination = destination  # Site object
+        self.links = links
+        self.time = time
+        self.estimator = estimator
+
+        self.initial = origin
+        self.goal = destination
+
     def get_actions(self, s):
         actions = []
         for l in self.links:
-            if l.origin.scats_num == s.scats_num:
-                actions.append(self.get_site_by_intersection(l.destination))
+            if hasattr(s, "scats_num") and l.origin.scats_num == s.scats_num:
+                site = self.get_site_by_intersection(l.destination.scats_num)
+                if site is not None:
+                    actions.append(site)
         return actions
 
-    # Returns a bool: is site 's' the destination?
     def goal_test(self, s):
         return s == self.destination
 
-     # Returns the travel time of traversing from site 'a' to site 'b'
     def travel_time(self, a, b):
-        """
-        Calculate travel time from Site a to Site b using the estimator.
-        """
         if self.estimator is None:
             raise Exception("No estimator assigned to TrafficProblem.")
         return self.estimator.travel_time(a, b, self.time)
 
-    # Computes the  distance of the closest intersections between site 's' and the destination
-     def distance_heuristic(self, s):
+    def distance_heuristic(self, s):
         """
-        Computes the Haversine (great-circle) distance, in km, of the closest intersections between site 's' and the destination
+        Computes the Haversine distance between the first intersection of s and destination.
+        Falls back to (0,0) if coordinates are unavailable.
         """
-        if self.goal_test(s):
-            return 0
+        try:
+            if not s.intersections or not self.destination.intersections:
+                return float('inf')
+            return haversine_distance(
+                s.intersections[0].coordinates[0], s.intersections[0].coordinates[1],
+                self.destination.intersections[0].coordinates[0], self.destination.intersections[0].coordinates[1]
+            )
+        except Exception:
+            return float('inf')
 
-        min_dist = float('inf')
-        for site_i in s.intersections: # Intersections of site 's'
-            for dest_i in self.destination.intersections: # Intersections of the destination site
-                dist = haversine_distance(site_i.coordinates[0], site_i.coordinates[1], dest_i.coordinates[0], dest_i.coordinates[1])
-                if dist < min_dist:
-                    min_dist = dist
-        return min_dist
-
-    def get_site_by_scats(self, scats_num):
-        for site in self.sites:
-            if site.scats_num == scats_num:
-                return site
-        return None
-
-    def get_site_by_intersection(self, intersection):
-        for site in self.sites:
-            if intersection in site.intersections:
-                return site
-        return None
+    def get_site_by_intersection(self, scats_num):
+        return next((site for site in self.sites if site.scats_num == scats_num), None)

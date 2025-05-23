@@ -1,4 +1,5 @@
 # TODO: Replace comments
+import math
 
 class Intersection:
     def __init__(self, scats_num, location, coordinates, roads, flow_records):
@@ -13,3 +14,9 @@ class Intersection:
 
     def __repr__(self):
         return f"{self.scats_num} {self.location} {self.coordinates}"
+    
+    def get_distance(self, other):
+
+        lat1, lon1 = self.coordinates
+        lat2, lon2 = other.coordinates
+        return math.sqrt((lat1 - lat2) ** 2 + (lon1 - lon2) ** 2)

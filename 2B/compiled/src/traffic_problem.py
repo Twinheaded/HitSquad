@@ -80,20 +80,13 @@ class TrafficProblem():
 
         print("date_hour:", date_hour)
         summed_flow = 0.0
-        intersections_counted = 0
         records_counted = 0
         for intersection in s.intersections:
-            intersections_counted += 1
-            print()
-            print("Intersection #" + str(intersections_counted))
             for datetime_in_hour in [record for record in intersection.flow_records.keys() if record.date() == date_hour.date() and record.hour == date_hour.hour]:
                 flow = intersection.flow_records[datetime_in_hour]
                 summed_flow += float(flow)
                 records_counted += 1
-                print("Time:", datetime_in_hour, "-> Flow:", flow)
         avg_flow = summed_flow / records_counted
-        print()
-        print("Average:", avg_flow)
         return avg_flow
 
     def travel_time(self, a, b):

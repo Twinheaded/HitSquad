@@ -1,3 +1,4 @@
+import datetime
 from src import FileParser, TrafficProblem, ALGORITHMS
 from src.data_structures import Site, Link
 # from src.ml_selector import train_and_evaluate, collect_benchmark_data, predict_best_algorithm
@@ -15,23 +16,30 @@ def data_processing_demo(problem):
     print("\nSITES\n================")
     print(problem.sites)
 
-    print("\nINTERSECTIONS\n================")
-    for i in problem.intersections:
-        print(i)
+    # printed = False
+    # print("\nINTERSECTIONS\n================")
+    # for i in problem.intersections:
+    #     print(i.flow_records)
+    #     if printed:
+    #         print(i)
+    #     printed = True
 
     print("\nLINKS (filtered to just site 4043)\n================")
     for link in [l for l in problem.links if l.origin.scats_num == '4043']:
         print(link)
 
-    print("\nTrafficProblem.get_actions('4043')\n================")
-    for action in problem.get_actions('4043'):
+    print("\nproblem.get_actions(problem.get_site_by_scats('4043'))\n================")
+    for action in problem.get_actions(problem.get_site_by_scats('4043')):
         print(action)
 
-    print("\nTrafficProblem.goal_test('4043')\n================")
-    print(problem.goal_test('4043'))
+    print("\nproblem.goal_test(problem.get_site_by_scats('4043'))\n================")
+    print(problem.goal_test(problem.get_site_by_scats('4043')))
 
-    print("\nTrafficProblem.distance_heuristic(problem.get_site_by_scats('2000')\n================")
+    print("\nproblem.distance_heuristic(problem.get_site_by_scats('2000'))\n================")
     print(problem.distance_heuristic(problem.get_site_by_scats('2000')))
+
+    print("\nproblem.get_flow_at_time(problem.get_site_by_scats('0970'), datetime.datetime(2006, 10, 1, 0, 0))\n================")
+    print(problem.get_flow_at_time(problem.get_site_by_scats('0970'), datetime.datetime(2006, 10, 1, 0, 0)))
 
 
 def search_method_demo(problem, search_method):
@@ -86,6 +94,6 @@ if __name__ == "__main__":
     problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
 
     # NOTE: Uncomment any of these to run its demo
-    # data_processing_demo(problem)
-    search_method_demo(problem, 'DFS')
+    data_processing_demo(problem)
+    # search_method_demo(problem, 'DFS')
     # ars_ml_algorithm_demo(problem)

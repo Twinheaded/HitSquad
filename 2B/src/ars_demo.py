@@ -70,7 +70,7 @@ def ars_ml_algorithm_demo(problem, graph):
     print("Result:", getattr(searchObj, "result", None))
     print("Final path:", getattr(searchObj, "final_path", None))
 
-    # Optionally: execute best cost
+    # Execute best cost
     if best_cost != best_runtime:
         print(f"\n=== Running ARS Algorithm for Best Cost: {best_cost} ===")
         AlgorithmClass = ALGORITHMS[best_cost]

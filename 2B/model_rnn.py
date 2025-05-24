@@ -1,5 +1,5 @@
 from keras.models import Sequential
-from keras.layers import RNN, Dense, Dropout, BatchNormalization
+from keras.layers import SimpleRNN, Dense, Dropout, BatchNormalization
 
 class RNNModel:
     def __init__(self, units, num_features=1, dropout_rate=0.2, output_activation='sigmoid'):
@@ -21,20 +21,20 @@ class RNNModel:
 
     def build_model(self):
         model = Sequential()
-        model.add(RNN(self.units[1], input_shape=(self.units[0], self.num_features), return_sequences=True))
+        model.add(SimpleRNN(self.units[1], input_shape=(self.units[0], self.num_features), return_sequences=True))
         model.add(BatchNormalization())
         model.add(Dropout(self.dropout_rate))
 
-        model.add(RNN(self.units[2], return_sequences=True))
+        model.add(SimpleRNN(self.units[2], return_sequences=True))
         model.add(BatchNormalization())
         model.add(Dropout(self.dropout_rate))
 
-        model.add(RNN(self.units[2]))
+        model.add(SimpleRNN(self.units[2]))
         model.add(BatchNormalization())
         model.add(Dropout(self.dropout_rate))
 
         model.add(Dense(self.units[3], activation=self.output_activation))
         return model
 
-    def return_model():
+    def return_model(self):
         return self.model

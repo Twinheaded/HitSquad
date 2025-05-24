@@ -20,28 +20,14 @@ os.makedirs(output_dir, exist_ok=True)
 for scat in unique_scats:
     folder_path = os.path.join(output_dir, str(scat))
     os.makedirs(folder_path, exist_ok=True)
-
-    # Filter the dataframe for the current SCATS Number
     df_filtered = filtered_df[filtered_df['SCATS Number'] == scat]
-
-    # Output files paths
     output_file = os.path.join(folder_path, f'{scat}.csv')
     test_output_file = os.path.join(folder_path, f'{scat}_test.csv')
-
-    # Remove the 'SCATS Number' column (we only need values from V00 to V95)
     df_values = df_filtered.drop(columns='SCATS Number')
-
-    # Reshape the DataFrame to a single column
     reshaped_values = df_values.values.flatten()
-
-    # Convert the reshaped values into a DataFrame with a single column 'Values'
     reshaped_df = pd.DataFrame(reshaped_values, columns=['Values'])
-
-    # Create the test file (last 2304 rows)
-    last_values = reshaped_df.iloc[-2304:]
+    last_values = reshaped_df.iloc[-2880:]
     last_values.to_csv(test_output_file, index=False, header=True)
-
-    # Create the train file (all values except the last 2304 rows)
     train_values = reshaped_df.iloc[:-2304]
     train_values.to_csv(output_file, index=False, header=True)
 

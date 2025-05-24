@@ -2,15 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from src import FileParser, TrafficProblem, ALGORITHMS
+from .map_gui import MapGUI
 # from src.data_structures import Site, Link
-
-# Dummy route generator (will be replaced by actual model integration)
-def generate_route(origin, destination):
-    # Placeholder: simulate 2 dummy routes
-    return [
-        {'path': [origin, '2041', destination], 'time': 12.3},
-        {'path': [origin, '2824', destination], 'time': 13.0}
-    ]
 
 class MainGUI:
     def __init__(self, root):
@@ -60,13 +53,17 @@ class MainGUI:
         self.result_text.pack(pady=10)
 
     def display_routes(self):
-        origin = self.origin_var.get()
-        destination = self.destination_var.get()
-        search_method = self.method_var.get()
+        # origin = self.origin_var.get()
+        # destination = self.destination_var.get()
+        # search_method = self.method_var.get()
 
-        if not (origin and destination):
-            messagebox.showwarning("Input Error", "Please select both Origin and Destination.")
-            return
+        # if not (origin and destination and search_method):
+        #     messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
+        #     return
+        origin = '2000'
+        destination = '4043'
+        search_method = 'AS'
+
 
         # Create a problem object with the specified origin and destination SCATS sites
         problem = self.fp.create_problem(origin, destination) # Arguments: origin, destination
@@ -82,3 +79,7 @@ class MainGUI:
             # route_str = f"Route {i+1}: \n"
 
         self.result_text.insert(tk.END, route_str)
+
+        mp = MapGUI(problem.sites, origin, destination, searchObj.final_path)
+        mp.generate()
+        mp.open()

@@ -4,6 +4,7 @@ class AS(SearchMethod):
     name = "A*"
 
     def search(self):
+        H_MULTIPLIER = 15
         h = self.problem.distance_heuristic
         g = self.problem.travel_time
 
@@ -19,11 +20,11 @@ class AS(SearchMethod):
 
             ## A list of connected nodes (actions) sorted by the shortest distance to the nearest destination
             actions_sorted_by_id = [site for site in sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num, reverse=True)]
-            actions = [site for site in sorted(actions_sorted_by_id, key=lambda x: g(current_site, x) + h(x), reverse=True)]
+            actions = [site for site in sorted(actions_sorted_by_id, key=lambda x: g(current_site, x) + h(x)*H_MULTIPLIER, reverse=True)]
             for site in actions:
                 if not site in self.explored:
                     self.frontier.append((site, path))
 
             ################
-            # self.print_state(current_site, actions) # <-- For debugging only
+            self.print_state(current_site, actions) # <-- For debugging only
             ################

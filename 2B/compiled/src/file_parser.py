@@ -2,6 +2,8 @@ import regex as re
 import pandas as pd
 from datetime import datetime, timedelta
 
+from src.traffic_utils import haversine_distance
+
 # from .data_structures.intersection import Intersection
 # from .data_structures.site import Site
 # from .data_structures.link import Link
@@ -11,6 +13,9 @@ from .data_structures import Site, Intersection, Link
 
 class FileParser:
     DATA_DIR_PATH = "src/source_data/"
+    OFFSET_LAT = 0.001497
+    OFFSET_LONG = 0.0013395
+
     def __init__(self, file_name):
         self.file_name = file_name
         self.origin = None        # <Site> - the first site of the search
@@ -20,6 +25,9 @@ class FileParser:
         self.links = []           # [<Link>, <Link>, ...]
 
     def create_problem(self, origin, dest):
+        scats_nums = [s.scats_num for s in self.sites]
+        if not (origin in scats_nums and dest in scats_nums):
+            raise ValueError(f"Could not find origin or destination site: {origin}, {dest}")
         return TrafficProblem(self.sites, self.intersections, origin, dest, self.links)
         
     def parse(self):
@@ -67,7 +75,7 @@ class FileParser:
                     ]].values.tolist()
                 for i in range(len(time_delay_list)):
                     flow_records[date + timedelta(minutes=i*15)] = time_delay_list[i]
-            self.intersections.append(Intersection(scats_num, intersection, (float(lat), float(long)), roads, flow_records))
+            self.intersections.append(Intersection(scats_num, intersection, (float(lat)+self.OFFSET_LAT, float(long)+self.OFFSET_LONG), roads, flow_records))
         
         # Add Intersections to the .intersection attribute of Site objects
         for num in unique_scats_nums:
@@ -81,7 +89,11 @@ class FileParser:
         # Create links between Intersections
         for a in self.intersections:
             for b in self.intersections:
-                if b.scats_num != a.scats_num and (a.roads[0] in b.roads or a.roads[1] in b.roads):
+                if all([
+                    b.scats_num != a.scats_num,
+                    a.roads[0] in b.roads or a.roads[1] in b.roads,
+                    haversine_distance(a.coordinates[0], a.coordinates[1], b.coordinates[0], b.coordinates[1]) < 3.5
+                    ]):
                     self.links.append(Link(a,b))
                     
     # Phil's code for getting flow and location dicts (Still need to be tested and reworked)

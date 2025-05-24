@@ -41,6 +41,9 @@ def data_processing_demo(problem):
     print("\nproblem.get_flow_at_time(problem.get_site_by_scats('0970'), datetime.datetime(2006, 10, 1, 0, 0))\n================")
     print(problem.get_flow_at_time(problem.get_site_by_scats('0970'), datetime.datetime(2006, 10, 1, 0, 0)))
 
+    print("\nproblem.travel_time(problem.get_site_by_scats('0970'), problem.get_site_by_scats('2000'))\n================")
+    print(problem.travel_time(problem.get_site_by_scats('0970'), problem.get_site_by_scats('2000')))
+
 
 def search_method_demo(problem, search_method):
     """

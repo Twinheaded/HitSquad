@@ -11,7 +11,7 @@ class Site:
         self.intersections = intersections
 
     def __repr__(self):
-        return f"{self.scats_num}"
+        return f"<Site> {self.scats_num}"
 
     def __hash__(self):
         return hash(self.scats_num)

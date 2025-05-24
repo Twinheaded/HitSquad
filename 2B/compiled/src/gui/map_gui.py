@@ -74,11 +74,20 @@ class MapGUI:
                 <b>SCATS ID: {scats_num}</b><br>
                 <a href='#' onclick="setPoint('{scats_num}', {lat}, {long})">Select as O/D</a>
             """, max_width=250)
-            folium.Marker(
-                location=[lat, long],
-                popup=popup,
-                tooltip="Click to select"
-            ).add_to(m)
+            if scats_num == self.origin or scats_num == self.destination:
+                folium.Marker(
+                    location=[lat, long],
+                    popup=popup,
+                    icon=folium.Icon(color='red'),
+                    tooltip="Click to select"
+                ).add_to(m)
+            else:
+                folium.Marker(
+                    location=[lat, long],
+                    popup=popup,
+                    icon=folium.Icon(color='lightgray'),
+                    tooltip="Click to select"
+                ).add_to(m)
 
         # Save map
         m.save(self.html_file_path)

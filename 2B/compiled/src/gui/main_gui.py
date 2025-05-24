@@ -53,13 +53,17 @@ class MainGUI:
         self.result_text.pack(pady=10)
 
     def display_routes(self):
-        origin = self.origin_var.get()
-        destination = self.destination_var.get()
-        search_method = self.method_var.get()
+        # origin = self.origin_var.get()
+        # destination = self.destination_var.get()
+        # search_method = self.method_var.get()
 
-        if not (origin and destination and search_method):
-            messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
-            return
+        # if not (origin and destination and search_method):
+        #     messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
+        #     return
+        origin = '2000'
+        destination = '4043'
+        search_method = 'AS'
+
 
         # Create a problem object with the specified origin and destination SCATS sites
         problem = self.fp.create_problem(origin, destination) # Arguments: origin, destination

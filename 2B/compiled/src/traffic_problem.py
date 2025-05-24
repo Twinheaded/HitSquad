@@ -10,7 +10,7 @@ class TrafficProblem():
     Contains all sites, intersections, and connecting links.
     An origin and destination site are set upon initialisation.
     """
-    def __init__(self, sites, intersections, origin, destination, links, time=datetime.datetime(2006, 10, 1, 0, 15), estimator=None):
+    def __init__(self, sites, intersections, origin, destination, links, time=datetime.datetime(2006, 10, 1, 0, 0), estimator=None):
         self.sites = sites # [<Site>, <Site>, ...] - All sites in the problem
         self.intersections = intersections # [<Intersection>, <Intersection>, ...] - All intersections in the problem
         self.origin = next(s for s in self.sites if s.scats_num == origin)    # <Site> - first site of the search
@@ -68,17 +68,12 @@ class TrafficProblem():
                 if dist < min_dist:
                     min_dist = dist
         return min_dist
-    
-    def get_flow_now(self, s):
-        return self.get_flow_at_time(s, self.time)
 
     def get_flow_at_time(self, s, date_hour):
         """
         Given site 's' and a datetime.time object,
         return the flow closest to the provided time.
         """
-
-        print("date_hour:", date_hour)
         summed_flow = 0.0
         records_counted = 0
         for intersection in s.intersections:
@@ -86,23 +81,19 @@ class TrafficProblem():
                 flow = intersection.flow_records[datetime_in_hour]
                 summed_flow += float(flow)
                 records_counted += 1
-        avg_flow = summed_flow / records_counted
-        return avg_flow
+        if records_counted > 0:
+            avg_flow = summed_flow / records_counted
+            return avg_flow
+        return 0
 
     def travel_time(self, a, b):
         """
-        Calculate travel time from Site a to Site b using the estimator.
+        Calculate travel time from Site a to Site b using flow data and haversine distance
         """
-
         dist = self.distance_between_sites(a,b) # Distance (km) between site 'a' and site 'b'
         
-        flow = self.get_flow_at_time(scats_b, time)
+        flow = self.get_flow_at_time(b, self.time)
         speed = flow_to_speed(flow)  # in km/h
 
-        travel_seconds = (distance / speed) * 3600 + 30  # add delay
+        travel_seconds = (dist / speed) * 3600 + 30  # add delay
         return travel_seconds
-
-        # if self.estimator is None:
-        #     raise Exception("No estimator assigned to TrafficProblem.")
-        # return self.estimator.travel_time(a, b, self.time)
-

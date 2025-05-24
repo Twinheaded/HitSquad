@@ -35,9 +35,10 @@ class TrafficProblem():
         """
         Calculate travel time from Site a to Site b using the estimator.
         """
-        if self.estimator is None:
-            raise Exception("No estimator assigned to TrafficProblem.")
-        return self.estimator.travel_time(a, b, self.time)
+
+        # if self.estimator is None:
+        #     raise Exception("No estimator assigned to TrafficProblem.")
+        # return self.estimator.travel_time(a, b, self.time)
 
     def distance_heuristic(self, s):
         """

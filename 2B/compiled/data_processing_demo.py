@@ -1,7 +1,7 @@
 import datetime
 from src import FileParser, TrafficProblem, ALGORITHMS
 from src.data_structures import Site, Link
-# from src.ml_selector import train_and_evaluate, collect_benchmark_data, predict_best_algorithm
+from src.ars_demo import ars_ml_algorithm_demo
 
 # Author: Jack
 # ===========================================================
@@ -71,7 +71,7 @@ def search_method_demo(problem, search_method):
 # ===========================
 # DEMONSTRATION OF ML-BASED ALGORITHM RECOMMENDATION SYSTEM
 # ===========================
-def ARS():
+def ARS(fp, problem):
     # Load and parse dataset
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()
@@ -82,15 +82,18 @@ def ARS():
     estimator = TravelTimeEstimator(flow_dict, location_dict)
 
     # Create the problem instance
-    problem = fp.create_problem('0970', '4040')
-    problem.estimator = estimator
+    # problem = fp.create_problem('0970', '4040')
+    # problem.estimator = estimator
 
     # NOTE: Uncomment the following line to collect benchmark data
-    # ars_ml_algorithm_demo(problem, fp.graph)
+    ars_ml_algorithm_demo(problem, fp.graph)
 
 if __name__ == "__main__":
+    # Load and parse dataset
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()
+
+    # Create the problem instance
     problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
 
     # NOTE: Uncomment any of these to run its demo
@@ -103,5 +106,4 @@ if __name__ == "__main__":
     print_flow_at_time(problem, '2000', datetime.datetime(2006, 10, 1, 0, 0))
     print_travel_time(problem, '0970', '2000')
 
-    # ars_ml_algorithm_demo(problem)
-
+    # ARS(fp, problem)

@@ -14,6 +14,8 @@ class GBFS(SearchMethod):
             if self.problem.goal_test(current_site):
                 self.result = current_site
                 self.final_path = path
+                for i in range(len(self.final_path) - 1):
+                    self.travel_time += self.problem.travel_time(self.final_path[i], self.final_path[i+1], self.ml_model)
                 return
 
             ## A list of connected sites (actions) sorted by the shortest distance to the nearest destination

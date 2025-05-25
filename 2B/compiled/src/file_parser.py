@@ -21,11 +21,13 @@ class FileParser:
         self.intersections = []   # [<Intersection>, <Intersection>, ...]
         self.links = []           # [<Link>, <Link>, ...]
 
-    def create_problem(self, origin, dest):
+    def create_problem(self, origin, dest, date_time=datetime(2006, 10, 1, 0, 0)):
         scats_nums = [s.scats_num for s in self.sites]
         if not (origin in scats_nums and dest in scats_nums):
             raise ValueError(f"Could not find origin or destination site: {origin}, {dest}")
-        return TrafficProblem(self.sites, self.intersections, origin, dest, self.links)
+        if not datetime(2006, 10, 1, 0, 0) <= date_time < datetime(2006, 12, 1, 0, 0):
+            raise ValueError(f"Invalid date/time {date_time}. Must be within October or November of 2006.")
+        return TrafficProblem(self.sites, self.intersections, origin, dest, self.links, date_time)
         
     def parse(self):
         # CREATE SITE OBJECTS

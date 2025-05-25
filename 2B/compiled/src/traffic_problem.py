@@ -10,13 +10,13 @@ class TrafficProblem():
     Contains all sites, intersections, and connecting links.
     An origin and destination site are set upon initialisation.
     """
-    def __init__(self, sites, intersections, origin, destination, links, time=datetime.datetime(2006, 10, 1, 0, 0), estimator=None):
+    def __init__(self, sites, intersections, origin, destination, links, date_time=datetime.datetime(2006, 10, 1, 0, 0), estimator=None):
         self.sites = sites # [<Site>, <Site>, ...] - All sites in the problem
         self.intersections = intersections # [<Intersection>, <Intersection>, ...] - All intersections in the problem
         self.origin = next(s for s in self.sites if s.scats_num == origin)    # <Site> - first site of the search
         self.destination = next(s for s in self.sites if s.scats_num == destination)        # <Site> - the final site of the search
         self.links = links # [<Link>, <Link>, ...]
-        self.time = time # the current time
+        self.date_time = date_time # the current time
         self.estimator = estimator  # TravelTimeEstimator instance
   
     def get_site_by_scats(self, scats_num):
@@ -69,30 +69,46 @@ class TrafficProblem():
                     min_dist = dist
         return min_dist
 
-    def get_flow_at_time(self, s, date_hour):
+    def get_flow_at_time(self, s, date_hour, ml_model):
         """
         Given site 's' and a datetime.time object,
         return the flow closest to the provided time.
         """
+        # Return the average of all flow records of site 's' at the date/hour 'date_hour'
         summed_flow = 0.0
         records_counted = 0
+        get_keys_within_the_same_hour = lambda dataset: [record for record in dataset.keys() if record.date() == date_hour.date() and record.hour == date_hour.hour]
+
         for intersection in s.intersections:
-            for datetime_in_hour in [record for record in intersection.flow_records.keys() if record.date() == date_hour.date() and record.hour == date_hour.hour]:
-                flow = intersection.flow_records[datetime_in_hour]
-                summed_flow += float(flow)
-                records_counted += 1
+            flow = 0
+            match ml_model:
+                case None:
+                    for key in get_keys_within_the_same_hour(intersection.flow_records):
+                        flow += intersection.flow_records[key]
+                case 'LSTM':
+                    for key in get_keys_within_the_same_hour(intersection.lstm_data):
+                        flow += intersection.lstm_data[key]
+                case 'GRU':
+                    for key in get_keys_within_the_same_hour(intersection.gru_data):
+                        flow += intersection.gru_data[key]
+                case 'RNN':
+                    for key in get_keys_within_the_same_hour(intersection.rnn_data):
+                        flow += intersection.rnn_data[key]
+                        
+            summed_flow += float(flow)
+            records_counted += 1
         if records_counted > 0:
             avg_flow = summed_flow / records_counted
             return avg_flow
         return 0
 
-    def travel_time(self, a, b):
+    def travel_time(self, a, b, ml_model):
         """
         Calculate travel time from Site a to Site b using flow data and haversine distance
         """
         dist = self.distance_between_sites(a,b) # Distance (km) between site 'a' and site 'b'
         
-        flow = self.get_flow_at_time(b, self.time)
+        flow = self.get_flow_at_time(b, self.date_time, ml_model)
         speed = flow_to_speed(flow) # in km/h
 
         travel_seconds = (dist / speed) * 3600 + 30 # add delay

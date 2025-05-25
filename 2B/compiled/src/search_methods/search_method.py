@@ -2,12 +2,14 @@ from src.traffic_problem import TrafficProblem
 from src.data_structures import Site
 
 class SearchMethod:
-    def __init__(self, problem):
+    def __init__(self, problem, ml_model=None):
         self.problem = problem
         self.frontier = [(problem.origin, [])] # [(<Site>, [path, from, origin])]
         self.explored = []      # [<Site>, <Site>, <Site>, ...]
         self.result = None      # <Site>
         self.final_path = []    # [<Site>, <Site>, <Site>, ...]
+        self.ml_model = ml_model
+        self.travel_time = 0
 
     def search(self):
         raise NotImplementedError

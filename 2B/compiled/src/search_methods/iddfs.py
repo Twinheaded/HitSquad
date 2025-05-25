@@ -3,8 +3,8 @@ from .search_method import SearchMethod
 class IDDFS(SearchMethod):
     name = "IDDFS"
 
-    def __init__(self, problem):
-        super().__init__(problem)
+    def __init__(self, problem, ml_algorithm=None):
+        super().__init__(problem, ml_algorithm)
         self.frontier = [(self.problem.origin, [], 0)] # Same as parent class but containing a third 'depth' value
 
     def search(self):
@@ -27,6 +27,8 @@ class IDDFS(SearchMethod):
                 self.result = current_site
                 self.explored += [current_site]
                 self.final_path = path
+                for i in range(len(self.final_path) - 1):
+                    self.travel_time += self.problem.travel_time(self.final_path[i], self.final_path[i+1], self.ml_model)
                 return True
 
             if depth > depth_limit:     

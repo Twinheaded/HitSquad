@@ -11,7 +11,7 @@ def flow_to_speed(flow):
 
     discriminant = b**2 - 4*a*c
     if discriminant < 0:
-        return 0  # no real solution
+        return 0 # no real solution
 
     sqrt_disc = math.sqrt(discriminant)
     speed1 = (-b + sqrt_disc) / (2 * a)
@@ -22,7 +22,7 @@ def flow_to_speed(flow):
     else:
         speed = min(speed1, speed2)
 
-    return min(speed, 60)  # Apply speed limit
+    return min(speed, 60) # Apply speed limit
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     """

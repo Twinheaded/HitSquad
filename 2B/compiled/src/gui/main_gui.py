@@ -3,7 +3,6 @@ from tkinter import ttk, messagebox
 
 from src import FileParser, TrafficProblem, ALGORITHMS
 from .map_gui import MapGUI
-# from src.data_structures import Site, Link
 
 class MainGUI:
     def __init__(self, root):
@@ -41,8 +40,8 @@ class MainGUI:
         self.method_menu = ttk.Combobox(frame, textvariable=self.method_var)
         self.method_menu.grid(row=2, column=1)
 
-        self.origin_menu['values'] = self.fp.sites
-        self.destination_menu['values'] = self.fp.sites
+        self.origin_menu['values'] = [s.scats_num for s in self.fp.sites]
+        self.destination_menu['values'] = [s.scats_num for s in self.fp.sites]
         self.method_menu['values'] = [a for a in ALGORITHMS.keys()]
 
         # Button to calculate
@@ -53,17 +52,13 @@ class MainGUI:
         self.result_text.pack(pady=10)
 
     def display_routes(self):
-        # origin = self.origin_var.get()
-        # destination = self.destination_var.get()
-        # search_method = self.method_var.get()
+        origin = self.origin_var.get()
+        destination = self.destination_var.get()
+        search_method = self.method_var.get()
 
-        # if not (origin and destination and search_method):
-        #     messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
-        #     return
-        origin = '2000'
-        destination = '4043'
-        search_method = 'AS'
-
+        if not (origin and destination and search_method):
+            messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
+            return
 
         # Create a problem object with the specified origin and destination SCATS sites
         problem = self.fp.create_problem(origin, destination) # Arguments: origin, destination

@@ -55,12 +55,12 @@ def main(argv):
             val = mdl.predict(flow_x, verbose=0)
             flow_x = flow_x.reshape(lag,)
             new_value = val[0][0]
-            flow_x = np.append(flow_x[1:], flow_y[i])
+            flow_x = np.append(flow_x[1:], flow_y[i % len(flow_y)])
             val = scaler.inverse_transform(val.reshape(-1, 1)).reshape(1, -1)[0]
 
             # ======= Terminal prints (Testing Only)=======
             print(f"[{scat}] Step {i} Prediction: {val[0]}")
-            print(f"[{scat}] Appending actual value from test set: {flow_y[i]}")
+            print(f"[{scat}] Appending actual value from test set: {flow_y[i % len(flow_y)]}")
             print("-" * 50)
             # ==============================================
 

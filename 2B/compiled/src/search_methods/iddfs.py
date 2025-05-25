@@ -5,7 +5,7 @@ class IDDFS(SearchMethod):
 
     def __init__(self, problem):
         super().__init__(problem)
-        self.frontier = [(self.problem.origin, [], 0)] # Same as parent class but with a third 'depth' value
+        self.frontier = [(self.problem.origin, [], 0)] # Same as parent class but containing a third 'depth' value
 
     def search(self):
         depth = 0
@@ -14,7 +14,7 @@ class IDDFS(SearchMethod):
                 return
             depth += 1
 
-    def depth_limited_dfs(self, depth_limit):   # also known as Depth Limited Search (DLS)
+    def depth_limited_dfs(self, depth_limit): # also known as Depth Limited Search (DLS)
         depth = 0
         local_explored = []
         
@@ -31,7 +31,7 @@ class IDDFS(SearchMethod):
 
             if depth > depth_limit:     
                 self.frontier = [(self.problem.origin, [], 0)] # Reset frontier to be ready for the next depth
-                self.explored += local_explored                 # self.explored will hold the paths of all DLS iterations
+                self.explored += local_explored                # self.explored will hold the paths of all DLS iterations
                 return False
 
             actions = [site for site in reversed(sorted(self.problem.get_actions(current_site), key=lambda x: x.scats_num))]

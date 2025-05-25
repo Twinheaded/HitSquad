@@ -23,15 +23,6 @@ def print_intersections(problem):
             print(i)
         printed = True
 
-# def print_ml_data_at_time(problem, site, time=datetime.datetime(2006, 11, 1, 0, 0):
-#     print("\nFLOW RECORDS AND ML DATA (of one intersection)\n================")
-#     print(problem.intersections[0].flow_records)
-#     for i in problem.intersections:
-#         print(i.flow_records)
-#         if printed:
-#             print(i)
-#         printed = True
-
 def print_links(problem, site):
     print("\nLINKS (filtered to just site {site})\n================")
     for link in [l for l in problem.links if l.origin.scats_num == f'{site}']:
@@ -57,7 +48,6 @@ def print_flow_at_time(problem, site, time=datetime.datetime(2006, 10, 1, 0, 0))
 def print_travel_time(problem, site1, site2):
     print(f"\nproblem.travel_time(problem.get_site_by_scats('{site1}'), problem.get_site_by_scats('{site2}'))\n================")
     print(problem.travel_time(problem.get_site_by_scats(f'{site1}'), problem.get_site_by_scats(f'{site2}')))
-
 
 def search_method_demo(problem, search_method):
     """
@@ -110,16 +100,15 @@ if __name__ == "__main__":
     problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
 
     # NOTE: Uncomment any of these to run its demo
-    print_sites(problem)
-    print_intersections(problem)
-    # print_ml_data_at_time(problem, site, datetime.datetime(2006, 11, 1, 0, 0)
-    print_links(problem, '4043')
-    print_actions(problem, '4043')
-    print_goal_test(problem, '4043')
-    print_heuristic(problem, '2000')
-    print_flow_at_time(problem, '2000', datetime.datetime(2006, 10, 1, 0, 0))
-    print_travel_time(problem, '0970', '2000')
+    # print_sites(problem)
+    # print_intersections(problem)
+    # print_links(problem, '4043')
+    # print_actions(problem, '4043')
+    # print_goal_test(problem, '4043')
+    # print_heuristic(problem, '2000')
+    # print_flow_at_time(problem, '2000', datetime.datetime(2006, 10, 1, 0, 0))
+    # print_travel_time(problem, '0970', '2000')
 
     # search_method_demo(problem, 'DFS')
-    # ars_ml_algorithm_demo(problem)
+    ars_ml_algorithm_demo(problem)
 

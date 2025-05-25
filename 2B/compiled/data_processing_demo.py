@@ -66,33 +66,27 @@ def search_method_demo(problem, search_method):
     print("Explored:", searchObj.explored)
     print("(", len(searchObj.explored), "intersections explored )\n")
 
-def ars_ml_algorithm_demo(problem):
-    """
-    Author: Jordan
-    ===========================
-    ML DEMONSTRATION CODE
-    ===========================
-    """
 
-    print("\nStarting Algorithm Recomendation System(ARS)...")
-    benchmark_file = "2B/src/data/algorithm_performance.csv"
-    X, y_runtime, y_cost = collect_benchmark_data(benchmark_file)
+# Author: Jordan
+# ===========================
+# DEMONSTRATION OF ML-BASED ALGORITHM RECOMMENDATION SYSTEM
+# ===========================
+def ARS():
+    # Load and parse dataset
+    fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
+    fp.parse()
 
-    if len(X) == 0:
-       print("No data found in data directory or data could not be parsed. Please check your data files.")
-       exit()
+    # Set up travel time estimator
+    flow_dict = fp.get_flow_dict()
+    location_dict = fp.get_location_dict()
+    estimator = TravelTimeEstimator(flow_dict, location_dict)
 
-    clf_runtime = train_and_evaluate(X, y_runtime, "Best Runtime")
-    clf_cost = train_and_evaluate(X, y_cost, "Best Cost")
+    # Create the problem instance
+    problem = fp.create_problem('0970', '4040')
+    problem.estimator = estimator
 
-    best_runtime, best_cost = predict_best_algorithm(problem.graph, clf_runtime, clf_cost)
-    print(f"ML predicts best for runtime: {best_runtime}")
-    print(f"ML predicts best for cost: {best_cost}")
-
-    AlgorithmClass = ALGORITHMS[best_runtime]
-    searchObj = AlgorithmClass(problem)
-    searchObj.search()
-    print("Result:", searchObj.result)
+    # NOTE: Uncomment the following line to collect benchmark data
+    # ars_ml_algorithm_demo(problem, fp.graph)
 
 if __name__ == "__main__":
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
@@ -100,15 +94,14 @@ if __name__ == "__main__":
     problem = fp.create_problem('2000', '4043') # Arguments: origin, destination
 
     # NOTE: Uncomment any of these to run its demo
-    # print_sites(problem)
-    # print_intersections(problem)
-    # print_links(problem, '4043')
-    # print_actions(problem, '4043')
-    # print_goal_test(problem, '4043')
-    # print_heuristic(problem, '2000')
-    # print_flow_at_time(problem, '2000', datetime.datetime(2006, 10, 1, 0, 0))
-    # print_travel_time(problem, '0970', '2000')
+    print_sites(problem)
+    print_intersections(problem)
+    print_links(problem, '4043')
+    print_actions(problem, '4043')
+    print_goal_test(problem, '4043')
+    print_heuristic(problem, '2000')
+    print_flow_at_time(problem, '2000', datetime.datetime(2006, 10, 1, 0, 0))
+    print_travel_time(problem, '0970', '2000')
 
-    # search_method_demo(problem, 'DFS')
-    ars_ml_algorithm_demo(problem)
+    # ars_ml_algorithm_demo(problem)
 

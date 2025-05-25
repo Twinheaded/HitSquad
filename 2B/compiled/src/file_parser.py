@@ -9,6 +9,7 @@ from .data_structures import Site, Intersection, Link
 
 class FileParser:
     DATA_DIR_PATH = "src/source_data/"
+    ML_PREDICTIONS_DIR_PATH = DATA_DIR_PATH + "ml_flow_predictions"
     OFFSET_LAT = 0.001497
     OFFSET_LONG = 0.0013395
 
@@ -66,11 +67,11 @@ class FileParser:
                 scats_num = site["SCATS Number"]
                 lat, long = site.NB_LATITUDE, site.NB_LONGITUDE
                 date = datetime.strptime(site.Date, '%d/%m/%Y')
-                time_delay_list = site[[
+                flow_list = site[[
                     "V00","V01","V02","V03","V04","V05","V06","V07","V08","V09","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22","V23","V24","V25","V26","V27","V28","V29","V30","V31","V32","V33","V34","V35","V36","V37","V38","V39","V40","V41","V42","V43","V44","V45","V46","V47","V48","V49","V50","V51","V52","V53","V54","V55","V56","V57","V58","V59","V60","V61","V62","V63","V64","V65","V66","V67","V68","V69","V70","V71","V72","V73","V74","V75","V76","V77","V78","V79","V80","V81","V82","V83","V84","V85","V86","V87","V88","V89","V90","V91","V92","V93","V94","V95"
                     ]].values.tolist()
-                for i in range(len(time_delay_list)):
-                    flow_records[date + timedelta(minutes=i*15)] = time_delay_list[i]
+                for i in range(len(flow_list)):
+                    flow_records[date + timedelta(minutes=i*15)] = flow_list[i]
             self.intersections.append(Intersection(scats_num, intersection, (float(lat)+self.OFFSET_LAT, float(long)+self.OFFSET_LONG), roads, flow_records))
         
         # Add Intersections to the .intersection attribute of Site objects

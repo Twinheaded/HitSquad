@@ -79,15 +79,15 @@ class MainGUI:
 
         self.result_text.delete(1.0, tk.END)
 
+        paths = []
         for search_obj in search_objects:
-            result = f"{search_obj.name} ({search_obj.travel_time:.2f} seconds)\n" + ' → '.join(map(lambda x: x.scats_num, search_obj.final_path)) + '\n\n'
+            if not search_obj.final_path == []:
+                result = f"{search_obj.name} ({search_obj.travel_time:.2f} seconds)\n" + ' → '.join(map(lambda x: x.scats_num, search_obj.final_path)) + '\n\n'
+                paths.append(search_obj.final_path)
+            else:
+                result = f"{search_obj.name}\nNo path found.\n\n"
             self.result_text.insert(tk.END, result)
 
-        # TODO: Show multiple routes
-        # for i, route in enumerate(routes):
-            # route_str = f"Route {i+1}: \n"
-
-
-        # mp = MapGUI(problem.sites, origin, destination, searchObj.final_path)
-        # mp.generate()
-        # mp.open()
+        mp = MapGUI(problem.sites, origin, destination, paths)
+        mp.generate()
+        mp.open()

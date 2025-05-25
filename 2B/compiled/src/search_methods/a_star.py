@@ -32,12 +32,6 @@ class AS(SearchMethod):
                 if not site in self.explored and not site in [s[0] for s in self.frontier]:
                     self.frontier.append((site, path))
 
-            print(self.frontier)
-
-            if len(self.frontier) > 100:
-                self.frontier = []
-                return
-
             ################
             # self.print_state(current_site, actions) # <-- For debugging only
             ################

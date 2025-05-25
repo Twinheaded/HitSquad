@@ -1,5 +1,4 @@
 class Site:
-    # def __init__(self, scats_num, coordinates, roads, flow_records):
     def __init__(self, scats_num, intersections):
         """
         A data structure representing a single SCATS site.

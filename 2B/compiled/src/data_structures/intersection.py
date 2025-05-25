@@ -1,5 +1,3 @@
-# TODO: Replace comments
-
 class Intersection:
     def __init__(self, scats_num, location, coordinates, roads, flow_records):
         """

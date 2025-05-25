@@ -16,13 +16,13 @@ def data_processing_demo(problem):
     print("\nSITES\n================")
     print(problem.sites)
 
-    # printed = False
-    # print("\nINTERSECTIONS\n================")
-    # for i in problem.intersections:
-    #     print(i.flow_records)
-    #     if printed:
-    #         print(i)
-    #     printed = True
+    printed = False
+    print("\nINTERSECTIONS (including the flow records of one intersection)\n================")
+    for i in problem.intersections:
+        print(i.flow_records)
+        if printed:
+            print(i)
+        printed = True
 
     print("\nLINKS (filtered to just site 4043)\n================")
     for link in [l for l in problem.links if l.origin.scats_num == '4043']:
@@ -89,7 +89,6 @@ def ars_ml_algorithm_demo(problem):
     searchObj = AlgorithmClass(problem)
     searchObj.search()
     print("Result:", searchObj.result)
-
 
 if __name__ == "__main__":
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")

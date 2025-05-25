@@ -4,10 +4,6 @@ from datetime import datetime, timedelta
 
 from src.traffic_utils import haversine_distance
 
-# from .data_structures.intersection import Intersection
-# from .data_structures.site import Site
-# from .data_structures.link import Link
-# from .data_structures.traffic_problem import TrafficProblem
 from .traffic_problem import TrafficProblem
 from .data_structures import Site, Intersection, Link
 
@@ -132,5 +128,3 @@ class FileParser:
                 float(intersection.coordinates[1])
             )
         return location_dict
-
-

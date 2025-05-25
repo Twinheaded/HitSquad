@@ -7,7 +7,7 @@ class GBFS(SearchMethod):
         h = self.problem.distance_heuristic
 
         while self.frontier:
-            current_site, path = self.frontier.pop()          # state - the current node
+            current_site, path = self.frontier.pop()
             path = path + [current_site]
             self.explored.append(current_site)
 

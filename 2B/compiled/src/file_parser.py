@@ -9,7 +9,7 @@ from .data_structures import Site, Intersection, Link
 
 class FileParser:
     DATA_DIR_PATH = "src/source_data/"
-    ML_PREDICTIONS_DIR_PATH = DATA_DIR_PATH + "ml_flow_predictions"
+    ML_PREDICTIONS_DIR_PATH = DATA_DIR_PATH + "ml_flow_predictions/"
     OFFSET_LAT = 0.001497
     OFFSET_LONG = 0.0013395
 
@@ -62,6 +62,7 @@ class FileParser:
             scats_num = ""
             lat, long = 0, 0
             roads = re.split(r" [NSEW]{1,2} of ", intersection, flags=re.IGNORECASE)
+            # Existing flow (number of cars per 15 mins) data for October
             flow_records = {}
             for index, site in sites_data.loc[sites_data['Location'] == intersection].iterrows():
                 scats_num = site["SCATS Number"]
@@ -93,8 +94,36 @@ class FileParser:
                     haversine_distance(a.coordinates[0], a.coordinates[1], b.coordinates[0], b.coordinates[1]) < MAXIMUM_LINK_DISTANCE
                     ]):
                     self.links.append(Link(a,b))
+
+        # November flow records predicted by LSTM, GRU, and RNN machine learning models
+        print("Loading lSTM/GRU/RNN predicted flow data...", end="")
+        for intersection in self.intersections:
+            scats_num = intersection.scats_num
+            # Retrieve LSTM/GRU/RNN flow data for the current site
+            # File path example: 'src/source_data/ml_flow_predictions/0970/lstm_0970.csv'
+            lstm_data = pd.read_csv(
+                self.ML_PREDICTIONS_DIR_PATH + scats_num + "/lstm_" + scats_num + ".csv",
+                dtype=float,
+                ).values.tolist()
+            gru_data = pd.read_csv(
+                self.ML_PREDICTIONS_DIR_PATH + scats_num + "/gru_" + scats_num + ".csv",
+                dtype=float,
+                ).values.tolist()
+            rnn_data = pd.read_csv(
+                self.ML_PREDICTIONS_DIR_PATH + scats_num + "/rnn_" + scats_num + ".csv",
+                dtype=float,
+                ).values.tolist()
+
+            VALUE_COUNT = 2880 # Number of 15 minute intervals from 2006/11/1 0:00 to 2006/11/30 23:45
+            for i in range(VALUE_COUNT):
+                date_time = datetime(2006,11,1) + timedelta(minutes=i*15)
+                intersection.lstm_data[date_time] = lstm_data[i][0]
+                intersection.gru_data[date_time] = gru_data[i][0]
+                intersection.rnn_data[date_time] = rnn_data[i][0]
+        print(" done")
+
                     
-    # Phil's code for getting flow and location dicts (Still need to be tested and reworked)
+    # TODO Phil's code for getting flow and location dicts (Still need to be tested and reworked)
     def get_flow_dict(self):
         """
         Returns {scats_id: [FlowRecord-like dict]}.

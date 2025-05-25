@@ -9,5 +9,19 @@ class Intersection:
         self.roads = roads # ["DENMARK_ST", "BARKERS_RD", ...] - roads on the intersection
         self.flow_records = flow_records  # {datetime: int, datetime: int, ...} - a set of flow data, compiled from all days/times at this intersection
 
+         # {datetime: int, datetime: int, ...} - November flow records predicted by LSTM, GRU, and RNN machine learning models
+        self.lstm_data = {}
+        self.gru_data = {}
+        self.rnn_data = {}
+
+    # def add_ml_data(model, key, value):
+    #     match model:
+    #         case 'LSTM':
+    #             self.lstm_data[key] = value
+    #         case 'GRU':
+    #             self.gru_[key] = value
+    #         case 'RNN':
+    #             self.rnn_[key] = value
+
     def __repr__(self):
         return f"{self.scats_num} {self.location} {self.coordinates}"

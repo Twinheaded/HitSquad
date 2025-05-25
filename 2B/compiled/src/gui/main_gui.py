@@ -30,25 +30,36 @@ class MainGUI:
         self.origin_var = tk.StringVar()
         self.origin_menu = ttk.Combobox(frame, textvariable=self.origin_var)
         self.origin_menu.grid(row=0, column=1)
+        self.origin_menu['values'] = [s.scats_num for s in self.fp.sites]
+        self.origin_menu.current(0)
 
         ttk.Label(frame, text="Destination SCATS ID:").grid(row=1, column=0, padx=5, pady=5)
         self.destination_var = tk.StringVar()
         self.destination_menu = ttk.Combobox(frame, textvariable=self.destination_var)
         self.destination_menu.grid(row=1, column=1)
+        self.destination_menu['values'] = [s.scats_num for s in self.fp.sites]
+        self.destination_menu.current(0)
 
         ttk.Label(frame, text="ML Model:").grid(row=2, column=0, padx=5, pady=5)
         self.method_var = tk.StringVar()
         self.method_menu = ttk.Combobox(frame, textvariable=self.method_var)
         self.method_menu.grid(row=2, column=1)
-
-        self.origin_menu['values'] = [s.scats_num for s in self.fp.sites]
-        self.origin_menu.current(0)
-        self.destination_menu['values'] = [s.scats_num for s in self.fp.sites]
-        self.destination_menu.current(0)
-        # self.method_menu['values'] = [a for a in ALGORITHMS.keys()]
         self.method_menu['values'] = ['LSTM', 'GRU', 'RNN']
         self.method_menu.current(0)
 
+        ttk.Label(frame, text="Date in November:").grid(row=3, column=0, padx=5, pady=5)
+        self.date_var = tk.StringVar()
+        self.date_menu = ttk.Combobox(frame, textvariable=self.date_var)
+        self.date_menu.grid(row=3, column=1)
+        self.date_menu['values'] = [str(n) for n in range(1,31)]
+        self.date_menu.current(0)
+
+        ttk.Label(frame, text="Hour (24hr time):").grid(row=4, column=0, padx=5, pady=5)
+        self.hour_var = tk.StringVar()
+        self.hour_menu = ttk.Combobox(frame, textvariable=self.hour_var)
+        self.hour_menu.grid(row=4, column=1)
+        self.hour_menu['values'] = [str(n) for n in range(0, 24)]
+        self.hour_menu.current(0)
 
         # Button to calculate
         ttk.Button(root, text="Generate Routes", command=self.display_routes).pack(pady=10)
@@ -60,8 +71,9 @@ class MainGUI:
     def display_routes(self):
         origin = self.origin_var.get()
         destination = self.destination_var.get()
-        # search_method = self.method_var.get()
         ml_model = self.method_var.get()
+        date = int(self.date_var.get())
+        hour = int(self.hour_var.get())
 
         if not (origin and destination and ml_model):
             # messagebox.showwarning("Input Error", "Please select Origin, Destination, and Search Method.")
@@ -69,7 +81,7 @@ class MainGUI:
             return
 
         # Create a problem object with the specified origin and destination SCATS sites
-        problem = self.fp.create_problem(origin, destination, datetime(2006, 11, 2, 0, 0)) # Arguments: origin, destination
+        problem = self.fp.create_problem(origin, destination, datetime(2006, 11, date, hour, 0)) # Arguments: origin, destination
 
         search_objects = []
         for a in ALGORITHMS.values():

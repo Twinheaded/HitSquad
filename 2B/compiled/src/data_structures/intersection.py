@@ -14,14 +14,5 @@ class Intersection:
         self.gru_data = {}
         self.rnn_data = {}
 
-    # def add_ml_data(model, key, value):
-    #     match model:
-    #         case 'LSTM':
-    #             self.lstm_data[key] = value
-    #         case 'GRU':
-    #             self.gru_[key] = value
-    #         case 'RNN':
-    #             self.rnn_[key] = value
-
     def __repr__(self):
         return f"{self.scats_num} {self.location} {self.coordinates}"

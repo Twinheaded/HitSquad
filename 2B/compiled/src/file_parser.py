@@ -87,12 +87,13 @@ class FileParser:
             self.sites.append(Site(num, intersections_in_site))
 
         # Create links between Intersections
+        MAXIMUM_LINK_DISTANCE = 4 # in km
         for a in self.intersections:
             for b in self.intersections:
                 if all([
                     b.scats_num != a.scats_num,
                     a.roads[0] in b.roads or a.roads[1] in b.roads,
-                    haversine_distance(a.coordinates[0], a.coordinates[1], b.coordinates[0], b.coordinates[1]) < 3.5
+                    haversine_distance(a.coordinates[0], a.coordinates[1], b.coordinates[0], b.coordinates[1]) < MAXIMUM_LINK_DISTANCE
                     ]):
                     self.links.append(Link(a,b))
                     

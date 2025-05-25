@@ -73,14 +73,13 @@ def search_method_demo(problem, search_method):
     print("Explored:", searchObj.explored)
     print("(", len(searchObj.explored), "intersections explored )\n")
 
-
+def ARS():
     """
     Author: Jordan
     ===========================
     DEMONSTRATION OF ML-BASED ALGORITHM RECOMMENDATION SYSTEM
     ===========================
     """
-def ARS():
     # Load and parse dataset
     fp = FileParser("Oct_2006_Boorondara_Traffic_Flow_Data.csv")
     fp.parse()

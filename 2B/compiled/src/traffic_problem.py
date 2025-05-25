@@ -93,7 +93,7 @@ class TrafficProblem():
         dist = self.distance_between_sites(a,b) # Distance (km) between site 'a' and site 'b'
         
         flow = self.get_flow_at_time(b, self.time)
-        speed = flow_to_speed(flow)  # in km/h
+        speed = flow_to_speed(flow) # in km/h
 
-        travel_seconds = (dist / speed) * 3600 + 30  # add delay
+        travel_seconds = (dist / speed) * 3600 + 30 # add delay
         return travel_seconds

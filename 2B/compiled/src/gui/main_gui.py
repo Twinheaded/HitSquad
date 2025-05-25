@@ -3,7 +3,6 @@ from tkinter import ttk, messagebox
 
 from src import FileParser, TrafficProblem, ALGORITHMS
 from .map_gui import MapGUI
-# from src.data_structures import Site, Link
 
 class MainGUI:
     def __init__(self, root):

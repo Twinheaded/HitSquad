@@ -13,6 +13,8 @@ class IDDFS(SearchMethod):
             if self.depth_limited_dfs(depth):
                 return
             depth += 1
+            if depth > 50:
+                return
 
     def depth_limited_dfs(self, depth_limit): # also known as Depth Limited Search (DLS)
         depth = 0

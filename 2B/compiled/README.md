@@ -10,7 +10,7 @@
 ## Main project
 
 ```
-python main.py
+> python main.py
 ```
 
 ## Data processing demonstration
@@ -19,6 +19,6 @@ Under `if __name__ == '__main__':`, uncomment each function to see
 unique demonstrationsof how each piece of data was processed
 
 ```
-python data_processing_demo.py
+> python data_processing_demo.py
 ```
 

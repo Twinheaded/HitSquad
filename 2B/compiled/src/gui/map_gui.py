@@ -12,7 +12,7 @@ class MapGUI:
         self.origin = origin
         self.destination = destination
         self.final_path = []
-        self.html_file_path = os.getcwd()+"/src/source_data/boroondara_interactive_map.html"
+        self.html_file_path = os.getcwd()+"/src/source_data/map_search_output.html"
 
         for site in sites:
             intersection_coords = [i.coordinates for i in site.intersections]
